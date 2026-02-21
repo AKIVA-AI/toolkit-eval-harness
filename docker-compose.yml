@@ -1,0 +1,62 @@
+﻿version: '3.8'
+
+services:
+  eval-harness:
+    build: .
+    container_name: toolkit-eval-harness
+    volumes:
+      - ./packs:/app/packs
+      - ./results:/app/results
+      - ./suites:/app/suites
+      - ./examples:/app/examples
+    environment:
+      - EVAL_HARNESS_HOME=/app
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENABLE_SIGNING=${ENABLE_SIGNING:-false}
+    command: tail -f /dev/null
+
+  # Service for creating suite packs
+  pack-create:
+    build: .
+    container_name: eval-pack-create
+    volumes:
+      - ./packs:/app/packs
+      - ./suites:/app/suites
+    environment:
+      - EVAL_HARNESS_HOME=/app
+    command: >
+      toolkit-eval pack create
+      --suite-dir /app/suites
+      --out /app/packs/suite.zip
+
+  # Service for running evaluations
+  eval-run:
+    build: .
+    container_name: eval-run
+    volumes:
+      - ./packs:/app/packs
+      - ./results:/app/results
+    environment:
+      - EVAL_HARNESS_HOME=/app
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    command: >
+      toolkit-eval run
+      --suite /app/packs/suite.zip
+      --predictions /app/results/predictions.jsonl
+      --out /app/results/evaluation.json
+
+  # Service for regression checks
+  regression-check:
+    build: .
+    container_name: eval-regression
+    volumes:
+      - ./results:/app/results
+    environment:
+      - EVAL_HARNESS_HOME=/app
+    command: >
+      toolkit-eval regression
+      --current /app/results/current.json
+      --baseline /app/results/baseline.json
+      --out /app/results/regression.json
+
+

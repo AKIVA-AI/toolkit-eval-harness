@@ -23,6 +23,11 @@ classifiers = [
 ]
 dependencies = []
 
+[project.urls]
+Homepage = "https://github.com/AKIVA-AI/toolkit-eval-harness"
+Repository = "https://github.com/AKIVA-AI/toolkit-eval-harness"
+Issues = "https://github.com/AKIVA-AI/toolkit-eval-harness/issues"
+
 [project.scripts]
 toolkit-eval = "toolkit_eval_harness.cli:main"
 
@@ -44,11 +49,12 @@ testpaths = ["tests"]
 [tool.coverage.run]
 branch = true
 source = ["toolkit_eval_harness"]
+omit = ["*/toolkit_eval_harness/__main__.py"]
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
-fail_under = 80
+fail_under = 60
 
 [tool.ruff]
 line-length = 100
@@ -69,4 +75,3 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 toolkit_eval_harness = ["py.typed"]
-

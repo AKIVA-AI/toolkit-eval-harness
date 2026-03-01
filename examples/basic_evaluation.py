@@ -11,10 +11,10 @@ This example demonstrates the complete evaluation workflow:
 import json
 from pathlib import Path
 
-from toolkit_eval_harness.pack import create_pack, load_suite_from_path
-from toolkit_eval_harness.runner import run_suite
 from toolkit_eval_harness.compare import CompareBudget, compare_reports
+from toolkit_eval_harness.pack import create_pack, load_suite_from_path
 from toolkit_eval_harness.report import EvalReport
+from toolkit_eval_harness.runner import run_suite
 
 
 def main():

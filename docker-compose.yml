@@ -54,9 +54,8 @@ services:
     environment:
       - EVAL_HARNESS_HOME=/app
     command: >
-      toolkit-eval regression
-      --current /app/results/current.json
+      toolkit-eval compare
       --baseline /app/results/baseline.json
-      --out /app/results/regression.json
+      --candidate /app/results/current.json
 
 

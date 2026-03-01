@@ -76,10 +76,10 @@ toolkit-eval run \
   --out current_results.json
 
 # Check for regression
-toolkit-eval regression \
-  --current current_results.json \
+toolkit-eval compare \
   --baseline baseline_results.json \
-  --threshold 0.05
+  --candidate current_results.json \
+  --max-score-regression-pct 5.0
 ```
 
 ### CI/CD Integration
@@ -92,10 +92,10 @@ toolkit-eval regression \
       --suite packs/suite.zip \
       --predictions predictions.jsonl \
       --out results.json
-    
-    toolkit-eval regression \
-      --current results.json \
-      --baseline baseline.json
+
+    toolkit-eval compare \
+      --baseline baseline.json \
+      --candidate results.json
 ```
 
 ### Batch Evaluation
@@ -122,7 +122,7 @@ docker-compose run --rm pack-create
 # Run evaluation
 docker-compose run --rm eval-run
 
-# Check regression
+# Compare against baseline
 docker-compose run --rm regression-check
 ```
 

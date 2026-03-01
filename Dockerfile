@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
-COPY pyproject.toml setup.py README.md ./
+COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
 # Install package

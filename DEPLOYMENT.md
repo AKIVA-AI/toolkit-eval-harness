@@ -21,7 +21,7 @@ docker-compose run --rm pack-create
 # Run evaluation
 docker-compose run --rm eval-run
 
-# Check regression
+# Compare against baseline
 docker-compose run --rm regression-check
 
 # Interactive shell
@@ -71,11 +71,11 @@ toolkit-eval run \
   --predictions predictions.jsonl \
   --out results.json
 
-# Check regression
-toolkit-eval regression \
-  --current results.json \
+# Compare against baseline
+toolkit-eval compare \
   --baseline baseline.json \
-  --threshold 0.05
+  --candidate results.json \
+  --max-score-regression-pct 5.0
 ```
 
 ## ðŸ“Š Production Deployment
@@ -90,11 +90,10 @@ toolkit-eval regression \
       --suite packs/production-suite.zip \
       --predictions predictions.jsonl \
       --out results.json
-    
-    toolkit-eval regression \
-      --current results.json \
+
+    toolkit-eval compare \
       --baseline baseline.json \
-      --fail-on-regression
+      --candidate results.json
 ```
 
 **Exit Codes:**
@@ -108,48 +107,49 @@ toolkit-eval regression \
 # Version your suite packs
 toolkit-eval pack create \
   --suite-dir suites/v1.0.0 \
-  --out packs/suite-v1.0.0.zip \
-  --sign
+  --out packs/suite-v1.0.0.zip
 
-# Verify integrity
+# Verify integrity (hash check)
 toolkit-eval pack verify \
-  --suite packs/suite-v1.0.0.zip \
-  --verify-signature
+  --suite packs/suite-v1.0.0.zip
 ```
 
-### 3. Monitoring Integration
+### 3. Programmatic Usage
 
 ```python
-from toolkit_eval_harness.monitoring import get_health_status
+from toolkit_eval_harness import load_suite_from_path, run_suite
 
-# Check system health
-status = get_health_status()
-print(status)
-
-# Check specific suite pack
-from pathlib import Path
-status = get_health_status(pack_path=Path("packs/suite.zip"))
+# Load and run a suite
+suite = load_suite_from_path(Path("packs/suite.zip"))
+report = run_suite(suite=suite, predictions_path=Path("predictions.jsonl"))
+print(report.to_dict())
 ```
 
 ## ðŸ”’ Security
 
 ### 1. Suite Pack Signing
 ```bash
-# Generate signing key
-toolkit-eval keys generate --out signing.key
+# Generate signing keypair
+toolkit-eval keygen \
+  --private-key signing.key \
+  --public-key signing.pub
 
-# Sign suite pack
+# Create suite pack
 toolkit-eval pack create \
   --suite-dir suites/my-suite \
-  --out packs/my-suite.zip \
-  --sign \
-  --key signing.key
+  --out packs/my-suite.zip
+
+# Sign suite pack (detached signature)
+toolkit-eval pack sign \
+  --suite packs/my-suite.zip \
+  --private-key signing.key \
+  --out packs/my-suite.sig.json
 
 # Verify signature
-toolkit-eval pack verify \
+toolkit-eval pack verify-signature \
   --suite packs/my-suite.zip \
-  --verify-signature \
-  --key signing.pub
+  --signature packs/my-suite.sig.json \
+  --public-key signing.pub
 ```
 
 ### 2. Access Control
@@ -196,14 +196,17 @@ cat suites/my-suite/suite.json | jq .
 # Verify predictions format
 cat predictions.jsonl | jq -c .
 
-# Check scorer configuration
-toolkit-eval run --scorer exact_match --verbose
+# Run with verbose logging
+toolkit-eval run --suite packs/suite.zip --predictions predictions.jsonl -v
 ```
 
 **Regression Always Detected:**
 ```bash
-# Lower threshold
-toolkit-eval regression --threshold 0.1
+# Raise the allowed regression percentage
+toolkit-eval compare \
+  --baseline baseline.json \
+  --candidate results.json \
+  --max-score-regression-pct 10.0
 
 # Check baseline results
 cat baseline.json | jq .

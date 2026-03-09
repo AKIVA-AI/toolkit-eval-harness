@@ -108,13 +108,15 @@ def format_csv(data: dict[str, Any]) -> str:
         for c in data.get("cases", []):
             exact = c.get("exact", {})
             json_meta = c.get("json", {})
-            writer.writerow([
-                c.get("id", ""),
-                c.get("score", 0.0),
-                ";".join(c.get("tags", [])),
-                exact.get("match", ""),
-                json_meta.get("json_valid", ""),
-            ])
+            writer.writerow(
+                [
+                    c.get("id", ""),
+                    c.get("score", 0.0),
+                    ";".join(c.get("tags", [])),
+                    exact.get("match", ""),
+                    json_meta.get("json_valid", ""),
+                ]
+            )
     else:
         writer.writerow(["key", "value"])
         for key in sorted(data):
@@ -144,8 +146,5 @@ def get_formatter(name: str) -> Any:
     """
     if name not in FORMATTERS:
         available = ", ".join(sorted(FORMATTERS))
-        raise ValueError(
-            f"Unknown output format '{name}'. "
-            f"Available formats: {available}."
-        )
+        raise ValueError(f"Unknown output format '{name}'. Available formats: {available}.")
     return FORMATTERS[name]

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
 
 import pytest
 
+from toolkit_eval_harness.cli import EXIT_SUCCESS, main
 from toolkit_eval_harness.compare import CompareBudget, compare_reports
 from toolkit_eval_harness.pack import create_pack, load_suite_from_path, verify_pack
 from toolkit_eval_harness.report import EvalReport
@@ -19,8 +19,6 @@ from toolkit_eval_harness.scoring import (
     parse_json_schema,
     validate_json,
 )
-from toolkit_eval_harness.cli import EXIT_SUCCESS, EXIT_VALIDATION_FAILED, main
-
 
 # ============================================================================
 # Scorer: exact_match comprehensive
@@ -103,9 +101,7 @@ class TestJsonRequiredKeysScorer:
 
     def test_json_string_input(self) -> None:
         schema = JSONSchema(required_keys=["status"], optional_keys=[], allow_extra_keys=True)
-        score, meta = json_required_keys_score(
-            schema=schema, predicted='{"status": "ok"}'
-        )
+        score, meta = json_required_keys_score(schema=schema, predicted='{"status": "ok"}')
         assert score == 1.0
 
     def test_invalid_json_string(self) -> None:
@@ -125,9 +121,7 @@ class TestJsonRequiredKeysScorer:
         assert score == 1.0
 
     def test_extra_keys_disallowed(self) -> None:
-        schema = JSONSchema(
-            required_keys=["a"], optional_keys=["b"], allow_extra_keys=False
-        )
+        schema = JSONSchema(required_keys=["a"], optional_keys=["b"], allow_extra_keys=False)
         score, meta = json_required_keys_score(
             schema=schema, predicted={"a": 1, "b": 2, "extra": 3}
         )
@@ -185,11 +179,13 @@ class TestParseJsonSchema:
         assert schema.allow_extra_keys is True
 
     def test_full(self) -> None:
-        schema = parse_json_schema({
-            "required_keys": ["a", "b"],
-            "optional_keys": ["c"],
-            "allow_extra_keys": False,
-        })
+        schema = parse_json_schema(
+            {
+                "required_keys": ["a", "b"],
+                "optional_keys": ["c"],
+                "allow_extra_keys": False,
+            }
+        )
         assert schema.required_keys == ["a", "b"]
         assert schema.optional_keys == ["c"]
         assert schema.allow_extra_keys is False
@@ -213,18 +209,14 @@ class TestCompareBudgetEdgeCases:
         """Candidate scoring higher than baseline always passes."""
         baseline = EvalReport(suite={}, summary={"score": 0.5}, cases=[])
         candidate = EvalReport(suite={}, summary={"score": 0.9}, cases=[])
-        result = compare_reports(
-            baseline=baseline, candidate=candidate, budget=CompareBudget()
-        )
+        result = compare_reports(baseline=baseline, candidate=candidate, budget=CompareBudget())
         assert result["passed"] is True
         assert result["score_regression_pct"] < 0  # negative = improvement
 
     def test_equal_scores_pass(self) -> None:
         baseline = EvalReport(suite={}, summary={"score": 0.8}, cases=[])
         candidate = EvalReport(suite={}, summary={"score": 0.8}, cases=[])
-        result = compare_reports(
-            baseline=baseline, candidate=candidate, budget=CompareBudget()
-        )
+        result = compare_reports(baseline=baseline, candidate=candidate, budget=CompareBudget())
         assert result["passed"] is True
         assert result["score_regression_pct"] == 0.0
 
@@ -232,9 +224,7 @@ class TestCompareBudgetEdgeCases:
         """Both baseline and candidate at 0 fails (no_baseline_score_and_candidate_zero)."""
         baseline = EvalReport(suite={}, summary={"score": 0.0}, cases=[])
         candidate = EvalReport(suite={}, summary={"score": 0.0}, cases=[])
-        result = compare_reports(
-            baseline=baseline, candidate=candidate, budget=CompareBudget()
-        )
+        result = compare_reports(baseline=baseline, candidate=candidate, budget=CompareBudget())
         assert result["passed"] is False
 
     def test_large_budget_allows_regression(self) -> None:
@@ -264,13 +254,15 @@ def _make_suite_dir(tmp_path: Path, name: str = "roundtrip") -> Path:
     suite_dir = tmp_path / "suite"
     suite_dir.mkdir()
     (suite_dir / "suite.json").write_text(
-        json.dumps({
-            "schema_version": 1,
-            "name": name,
-            "description": "round-trip test",
-            "created_at": "2025-01-01T00:00:00Z",
-            "scoring": {"json_schema": {"required_keys": ["status"]}},
-        }),
+        json.dumps(
+            {
+                "schema_version": 1,
+                "name": name,
+                "description": "round-trip test",
+                "created_at": "2025-01-01T00:00:00Z",
+                "scoring": {"json_schema": {"required_keys": ["status"]}},
+            }
+        ),
         encoding="utf-8",
     )
     cases = [
@@ -348,11 +340,14 @@ class TestEndToEndRun:
         suite_dir = _make_suite_dir(tmp_path)
         preds = tmp_path / "preds.jsonl"
         preds.write_text(
-            "\n".join([
-                json.dumps({"id": "c1", "prediction": json.dumps({"status": "ok"})}),
-                json.dumps({"id": "c2", "prediction": "hello"}),
-                json.dumps({"id": "c3", "prediction": None}),
-            ]) + "\n",
+            "\n".join(
+                [
+                    json.dumps({"id": "c1", "prediction": json.dumps({"status": "ok"})}),
+                    json.dumps({"id": "c2", "prediction": "hello"}),
+                    json.dumps({"id": "c3", "prediction": None}),
+                ]
+            )
+            + "\n",
             encoding="utf-8",
         )
 
@@ -399,16 +394,26 @@ class TestCLIFormatFlag:
         suite_dir = _make_suite_dir(tmp_path)
         preds = tmp_path / "preds.jsonl"
         preds.write_text(
-            json.dumps({"id": "c1", "prediction": "x"}) + "\n"
-            + json.dumps({"id": "c2", "prediction": "hello"}) + "\n"
-            + json.dumps({"id": "c3", "prediction": None}) + "\n",
+            json.dumps({"id": "c1", "prediction": "x"})
+            + "\n"
+            + json.dumps({"id": "c2", "prediction": "hello"})
+            + "\n"
+            + json.dumps({"id": "c3", "prediction": None})
+            + "\n",
             encoding="utf-8",
         )
 
-        rc = main([
-            "--format", "table",
-            "run", "--suite", str(suite_dir), "--predictions", str(preds),
-        ])
+        rc = main(
+            [
+                "--format",
+                "table",
+                "run",
+                "--suite",
+                str(suite_dir),
+                "--predictions",
+                str(preds),
+            ]
+        )
         assert rc == EXIT_SUCCESS
         output = capsys.readouterr().out
         assert "Suite: roundtrip" in output
@@ -418,16 +423,26 @@ class TestCLIFormatFlag:
         suite_dir = _make_suite_dir(tmp_path)
         preds = tmp_path / "preds.jsonl"
         preds.write_text(
-            json.dumps({"id": "c1", "prediction": "x"}) + "\n"
-            + json.dumps({"id": "c2", "prediction": "hello"}) + "\n"
-            + json.dumps({"id": "c3", "prediction": None}) + "\n",
+            json.dumps({"id": "c1", "prediction": "x"})
+            + "\n"
+            + json.dumps({"id": "c2", "prediction": "hello"})
+            + "\n"
+            + json.dumps({"id": "c3", "prediction": None})
+            + "\n",
             encoding="utf-8",
         )
 
-        rc = main([
-            "--format", "csv",
-            "run", "--suite", str(suite_dir), "--predictions", str(preds),
-        ])
+        rc = main(
+            [
+                "--format",
+                "csv",
+                "run",
+                "--suite",
+                str(suite_dir),
+                "--predictions",
+                str(preds),
+            ]
+        )
         assert rc == EXIT_SUCCESS
         output = capsys.readouterr().out
         assert "id,score,tags" in output
@@ -436,17 +451,27 @@ class TestCLIFormatFlag:
         suite_dir = _make_suite_dir(tmp_path)
         preds = tmp_path / "preds.jsonl"
         preds.write_text(
-            json.dumps({"id": "c1", "prediction": "x"}) + "\n"
-            + json.dumps({"id": "c2", "prediction": "hello"}) + "\n"
-            + json.dumps({"id": "c3", "prediction": None}) + "\n",
+            json.dumps({"id": "c1", "prediction": "x"})
+            + "\n"
+            + json.dumps({"id": "c2", "prediction": "hello"})
+            + "\n"
+            + json.dumps({"id": "c3", "prediction": None})
+            + "\n",
             encoding="utf-8",
         )
         out_file = tmp_path / "result.json"
 
-        rc = main([
-            "--output", str(out_file),
-            "run", "--suite", str(suite_dir), "--predictions", str(preds),
-        ])
+        rc = main(
+            [
+                "--output",
+                str(out_file),
+                "run",
+                "--suite",
+                str(suite_dir),
+                "--predictions",
+                str(preds),
+            ]
+        )
         assert rc == EXIT_SUCCESS
         assert out_file.exists()
         data = json.loads(out_file.read_text(encoding="utf-8"))

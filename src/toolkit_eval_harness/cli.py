@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -138,23 +138,23 @@ def _cmd_keygen(args: argparse.Namespace) -> int:
     """Generate Ed25519 keypair for signing."""
     private_key_path = Path(args.private_key).resolve()
     public_key_path = Path(args.public_key).resolve()
-    
+
     logger.info("Generating Ed25519 keypair...")
-    
+
     try:
         kp = generate_ed25519_keypair()
         logger.info("Keypair generated successfully")
     except Exception as e:
         logger.error(f"Failed to generate keypair: {e}")
         return EXIT_CLI_ERROR
-    
+
     try:
         write_text(private_key_path, kp.private_key_pem)
         logger.info(f"Wrote private key to: {private_key_path}")
-        
+
         write_text(public_key_path, kp.public_key_pem)
         logger.info(f"Wrote public key to: {public_key_path}")
-        
+
         return EXIT_SUCCESS
     except (OSError, PermissionError) as e:
         logger.error(f"Failed to write key files: {e}")
@@ -236,8 +236,7 @@ def _cmd_pack_verify_sig(args: argparse.Namespace) -> int:
         sig_b64 = str(sig_obj.get("signature_b64") or "")
     except FileNotFoundError:
         logger.error(
-            "Signature file not found: %s. "
-            "Create one with 'toolkit-eval pack sign'.",
+            "Signature file not found: %s. Create one with 'toolkit-eval pack sign'.",
             signature_path,
         )
         return EXIT_CLI_ERROR
@@ -307,7 +306,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
     except FileNotFoundError:
         logger.error(
             "Predictions file not found: %s. "
-            "Provide a JSONL file with one {\"id\": ..., \"prediction\": ...} per line.",
+            'Provide a JSONL file with one {"id": ..., "prediction": ...} per line.',
             predictions_path,
         )
         return EXIT_CLI_ERROR
@@ -340,9 +339,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         out = Path(args.out).resolve()
         try:
             out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(
-                json.dumps(report_dict, indent=2, sort_keys=True), encoding="utf-8"
-            )
+            out.write_text(json.dumps(report_dict, indent=2, sort_keys=True), encoding="utf-8")
             logger.info(f"Wrote report to: {out}")
         except (OSError, PermissionError) as e:
             logger.error("Failed to write report to %s: %s", out, e)
@@ -367,15 +364,24 @@ def _cmd_check_deps(args: argparse.Namespace) -> int:
     # Check optional signing dependency
     try:
         import cryptography  # noqa: F401
+
         crypto_ver = cryptography.__version__  # type: ignore[attr-defined]
-        results["checks"].append({
-            "name": "cryptography (signing)", "version": crypto_ver, "ok": True,
-        })
+        results["checks"].append(
+            {
+                "name": "cryptography (signing)",
+                "version": crypto_ver,
+                "ok": True,
+            }
+        )
     except ImportError:
-        results["checks"].append({
-            "name": "cryptography (signing)", "version": None,
-            "ok": False, "note": "optional",
-        })
+        results["checks"].append(
+            {
+                "name": "cryptography (signing)",
+                "version": None,
+                "ok": False,
+                "note": "optional",
+            }
+        )
 
     # Report registered scorer plugins
     scorers = list_scorers()
@@ -607,10 +613,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     """Main entry point for CLI.
-    
+
     Args:
         argv: Command line arguments (defaults to sys.argv)
-        
+
     Returns:
         Exit code (0 = success, non-zero = error)
     """
@@ -628,7 +634,7 @@ def main(argv: list[str] | None = None) -> int:
         level=level,
         fmt=args.log_format,
     )
-    
+
     try:
         return int(args.func(args))
     except (ValueError, FileNotFoundError, PermissionError) as e:
@@ -644,5 +650,3 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return EXIT_UNEXPECTED_ERROR
-
-

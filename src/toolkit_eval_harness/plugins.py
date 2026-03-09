@@ -41,9 +41,12 @@ class ScorerFunc(Protocol):
     """Protocol that all scorer callables must satisfy."""
 
     def __call__(
-        self, *, expected: Any, predicted: Any, **kwargs: Any,
-    ) -> tuple[float, dict[str, Any]]:
-        ...
+        self,
+        *,
+        expected: Any,
+        predicted: Any,
+        **kwargs: Any,
+    ) -> tuple[float, dict[str, Any]]: ...
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -52,4 +52,3 @@ def test_pack_create_and_run(tmp_path: Path) -> None:
     report = run_suite(suite=suite, predictions_path=preds)
     assert report.summary["cases"] == 2
     assert 0.9 <= float(report.summary["score"]) <= 1.0
-

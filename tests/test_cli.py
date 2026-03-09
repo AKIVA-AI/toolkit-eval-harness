@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -130,4 +130,3 @@ def test_cli_compare_exit_code(tmp_path: Path, capsys: pytest.CaptureFixture[str
     assert rc == 4
     payload = json.loads(capsys.readouterr().out)
     assert payload["passed"] is False
-

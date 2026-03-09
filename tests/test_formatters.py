@@ -6,10 +6,9 @@ import csv
 import io
 import json
 
-from toolkit_eval_harness.formatters import format_csv, format_json, format_table, get_formatter
-
 import pytest
 
+from toolkit_eval_harness.formatters import format_csv, format_json, format_table, get_formatter
 
 # ---------------------------------------------------------------------------
 # format_json

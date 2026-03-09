@@ -1,4 +1,4 @@
-﻿"""Tests for eval-harness enhancements."""
+"""Tests for eval-harness enhancements."""
 
 from __future__ import annotations
 
@@ -81,7 +81,7 @@ def test_validate_dir_for_read_is_file(tmp_path: Path) -> None:
     """Test directory validation fails when path is file."""
     file_path = tmp_path / "test.txt"
     file_path.write_text("test", encoding="utf-8")
-    
+
     with pytest.raises(ValueError, match="not a directory"):
         validate_dir_for_read(file_path)
 
@@ -220,13 +220,17 @@ def test_cli_keygen_creates_files(tmp_path: Path) -> None:
     """Test keygen creates key files."""
     priv_key = tmp_path / "private.pem"
     pub_key = tmp_path / "public.pem"
-    
-    exit_code = main([
-        "keygen",
-        "--private-key", str(priv_key),
-        "--public-key", str(pub_key),
-    ])
-    
+
+    exit_code = main(
+        [
+            "keygen",
+            "--private-key",
+            str(priv_key),
+            "--public-key",
+            str(pub_key),
+        ]
+    )
+
     assert exit_code == EXIT_SUCCESS
     assert priv_key.exists()
     assert pub_key.exists()
@@ -234,32 +238,45 @@ def test_cli_keygen_creates_files(tmp_path: Path) -> None:
 
 def test_cli_pack_inspect_nonexistent() -> None:
     """Test inspect fails with nonexistent suite."""
-    exit_code = main([
-        "pack", "inspect",
-        "--suite", "/nonexistent",
-    ])
-    
+    exit_code = main(
+        [
+            "pack",
+            "inspect",
+            "--suite",
+            "/nonexistent",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
 def test_cli_pack_verify_nonexistent() -> None:
     """Test verify fails with nonexistent pack."""
-    exit_code = main([
-        "pack", "verify",
-        "--suite", "/nonexistent.zip",
-    ])
-    
+    exit_code = main(
+        [
+            "pack",
+            "verify",
+            "--suite",
+            "/nonexistent.zip",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
 def test_cli_pack_sign_pack_not_found() -> None:
     """Test sign fails when pack doesn't exist."""
-    exit_code = main([
-        "pack", "sign",
-        "--suite", "/nonexistent.zip",
-        "--private-key", "/nonexistent.pem",
-    ])
-    
+    exit_code = main(
+        [
+            "pack",
+            "sign",
+            "--suite",
+            "/nonexistent.zip",
+            "--private-key",
+            "/nonexistent.pem",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
@@ -268,28 +285,38 @@ def test_cli_pack_verify_sig_signature_not_found(tmp_path: Path) -> None:
     # Create dummy pack (just a file)
     pack = tmp_path / "pack.zip"
     pack.write_bytes(b"dummy")
-    
+
     pub_key = tmp_path / "public.pem"
     pub_key.write_text("dummy", encoding="utf-8")
-    
-    exit_code = main([
-        "pack", "verify-signature",
-        "--suite", str(pack),
-        "--signature", "/nonexistent.json",
-        "--public-key", str(pub_key),
-    ])
-    
+
+    exit_code = main(
+        [
+            "pack",
+            "verify-signature",
+            "--suite",
+            str(pack),
+            "--signature",
+            "/nonexistent.json",
+            "--public-key",
+            str(pub_key),
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
 def test_cli_run_suite_not_found() -> None:
     """Test run fails when suite doesn't exist."""
-    exit_code = main([
-        "run",
-        "--suite", "/nonexistent",
-        "--predictions", "/nonexistent.jsonl",
-    ])
-    
+    exit_code = main(
+        [
+            "run",
+            "--suite",
+            "/nonexistent",
+            "--predictions",
+            "/nonexistent.jsonl",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
@@ -297,13 +324,17 @@ def test_cli_compare_baseline_not_found(tmp_path: Path) -> None:
     """Test compare fails when baseline doesn't exist."""
     candidate = tmp_path / "candidate.json"
     candidate.write_text('{"suite": {}, "summary": {}, "cases": []}', encoding="utf-8")
-    
-    exit_code = main([
-        "compare",
-        "--baseline", "/nonexistent.json",
-        "--candidate", str(candidate),
-    ])
-    
+
+    exit_code = main(
+        [
+            "compare",
+            "--baseline",
+            "/nonexistent.json",
+            "--candidate",
+            str(candidate),
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
@@ -311,23 +342,30 @@ def test_cli_compare_candidate_not_found(tmp_path: Path) -> None:
     """Test compare fails when candidate doesn't exist."""
     baseline = tmp_path / "baseline.json"
     baseline.write_text('{"suite": {}, "summary": {}, "cases": []}', encoding="utf-8")
-    
-    exit_code = main([
-        "compare",
-        "--baseline", str(baseline),
-        "--candidate", "/nonexistent.json",
-    ])
-    
+
+    exit_code = main(
+        [
+            "compare",
+            "--baseline",
+            str(baseline),
+            "--candidate",
+            "/nonexistent.json",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
 def test_cli_validate_report_not_found() -> None:
     """Test validate fails when report doesn't exist."""
-    exit_code = main([
-        "validate-report",
-        "--report", "/nonexistent.json",
-    ])
-    
+    exit_code = main(
+        [
+            "validate-report",
+            "--report",
+            "/nonexistent.json",
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
@@ -335,12 +373,15 @@ def test_cli_validate_report_invalid_json(tmp_path: Path) -> None:
     """Test validate fails with invalid JSON."""
     report = tmp_path / "report.json"
     report.write_text("not valid json", encoding="utf-8")
-    
-    exit_code = main([
-        "validate-report",
-        "--report", str(report),
-    ])
-    
+
+    exit_code = main(
+        [
+            "validate-report",
+            "--report",
+            str(report),
+        ]
+    )
+
     assert exit_code == EXIT_CLI_ERROR
 
 
@@ -369,4 +410,3 @@ def test_write_text_creates_parent_directory(tmp_path: Path) -> None:
 
     assert file_path.exists()
     assert file_path.read_text() == content
-

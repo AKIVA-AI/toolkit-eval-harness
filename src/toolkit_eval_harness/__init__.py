@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version
 
@@ -30,4 +30,3 @@ __all__ = [
     "run_suite",
     "unregister_scorer",
 ]
-

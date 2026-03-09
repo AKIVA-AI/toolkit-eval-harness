@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -33,4 +33,3 @@ def test_load_suite_from_zip_twice_cleans_unpack_dir(tmp_path: Path) -> None:
     b = load_suite_from_path(pack)
     assert a.name == "demo"
     assert b.name == "demo"
-

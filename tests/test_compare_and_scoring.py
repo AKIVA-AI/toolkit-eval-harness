@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from toolkit_eval_harness.compare import CompareBudget, compare_reports
 from toolkit_eval_harness.report import EvalReport
@@ -41,4 +41,3 @@ def test_compare_reports_no_baseline_score() -> None:
     candidate = EvalReport(suite={}, summary={"score": 0.5}, cases=[])
     out = compare_reports(baseline=baseline, candidate=candidate, budget=CompareBudget())
     assert out["passed"] is True
-

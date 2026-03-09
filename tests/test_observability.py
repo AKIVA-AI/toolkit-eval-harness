@@ -5,14 +5,11 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any
-from unittest.mock import patch
 
 import pytest
 
-from toolkit_eval_harness.cli import EXIT_SUCCESS, EXIT_VALIDATION_FAILED, build_parser, main
+from toolkit_eval_harness.cli import EXIT_SUCCESS, build_parser, main
 from toolkit_eval_harness.logging_config import JSONFormatter, setup_logging
-
 
 # ---------------------------------------------------------------------------
 # Structured logging (JSON formatter)
@@ -177,9 +174,7 @@ class TestRunTimingMetrics:
             encoding="utf-8",
         )
 
-        rc = main(
-            ["run", "--suite", str(suite_dir), "--predictions", str(preds)]
-        )
+        rc = main(["run", "--suite", str(suite_dir), "--predictions", str(preds)])
         assert rc == EXIT_SUCCESS
         output = json.loads(capsys.readouterr().out)
 

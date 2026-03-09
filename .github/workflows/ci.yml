@@ -22,8 +22,9 @@ jobs:
     - run: pytest --cov=src --cov-report=xml --cov-fail-under=70 -v
     - uses: codecov/codecov-action@v4
       if: matrix.python-version == '3.11'
+      continue-on-error: true
       with:
-        fail_ci_if_error: true
+        fail_ci_if_error: false
 
   security:
     runs-on: ubuntu-latest

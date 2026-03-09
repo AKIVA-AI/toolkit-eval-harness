@@ -3,12 +3,16 @@
 import argparse
 import json
 import logging
+import platform
+import shutil
 import sys
+import time
 from pathlib import Path
 
 from . import __version__
 from .compare import CompareBudget, compare_reports
 from .io import read_bytes, read_json, read_text, write_json, write_text
+from .logging_config import JSONFormatter, setup_logging
 from .pack import create_pack, load_suite_from_path, verify_pack
 from .report import EvalReport, write_report_json
 from .runner import run_suite
@@ -190,35 +194,83 @@ def _cmd_run(args: argparse.Namespace) -> int:
     """Run an evaluation suite against predictions."""
     suite_path = Path(args.suite).resolve()
     predictions_path = Path(args.predictions).resolve()
-    
+
     logger.info(f"Running suite: {suite_path}")
     logger.debug(f"Predictions: {predictions_path}")
-    
+
     try:
         suite = load_suite_from_path(suite_path)
         logger.info(f"Loaded suite: {suite.name}")
     except (ValueError, FileNotFoundError, PermissionError) as e:
         logger.error(f"Failed to load suite: {e}")
         return EXIT_CLI_ERROR
-    
+
+    start_time = time.monotonic()
     try:
         report = run_suite(suite=suite, predictions_path=predictions_path)
         logger.info("Suite run completed")
     except (ValueError, FileNotFoundError, PermissionError) as e:
         logger.error(f"Failed to run suite: {e}")
         return EXIT_CLI_ERROR
-    
+    elapsed = time.monotonic() - start_time
+
+    # Enrich report with timing and metrics
+    report_dict = report.to_dict()
+    total_cases = report_dict["summary"].get("cases", 0)
+    pass_count = sum(1 for c in report_dict.get("cases", []) if c.get("score", 0) >= 1.0)
+    fail_count = total_cases - pass_count
+    report_dict["summary"]["execution_time_seconds"] = round(elapsed, 4)
+    report_dict["summary"]["pass_count"] = pass_count
+    report_dict["summary"]["fail_count"] = fail_count
+    report_dict["metadata"] = {
+        "tool_version": __version__,
+        "python_version": platform.python_version(),
+        "platform": platform.platform(),
+    }
+
+    logger.info(
+        f"Eval complete: {total_cases} cases, {pass_count} passed, "
+        f"{fail_count} failed, {elapsed:.3f}s elapsed"
+    )
+
     if args.out:
         out = Path(args.out).resolve()
         try:
-            write_report_json(report, out)
+            out.write_text(
+                json.dumps(report_dict, indent=2, sort_keys=True), encoding="utf-8"
+            )
             logger.info(f"Wrote report to: {out}")
         except (OSError, PermissionError) as e:
             logger.error(f"Failed to write report: {e}")
             return EXIT_CLI_ERROR
-    
-    print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
+
+    print(json.dumps(report_dict, indent=2, sort_keys=True))
     return EXIT_SUCCESS
+
+
+def _cmd_check_deps(args: argparse.Namespace) -> int:
+    """Check that required tools and dependencies are available."""
+    results: dict[str, Any] = {"tool": "toolkit-eval", "version": __version__, "checks": []}
+    all_ok = True
+
+    # Check Python version
+    py_ver = platform.python_version()
+    py_ok = sys.version_info >= (3, 10)
+    results["checks"].append({"name": "python>=3.10", "version": py_ver, "ok": py_ok})
+    if not py_ok:
+        all_ok = False
+
+    # Check optional signing dependency
+    try:
+        import cryptography  # noqa: F401
+        crypto_ver = cryptography.__version__  # type: ignore[attr-defined]
+        results["checks"].append({"name": "cryptography (signing)", "version": crypto_ver, "ok": True})
+    except ImportError:
+        results["checks"].append({"name": "cryptography (signing)", "version": None, "ok": False, "note": "optional"})
+
+    results["all_ok"] = all_ok
+    print(json.dumps(results, indent=2, sort_keys=True))
+    return EXIT_SUCCESS if all_ok else EXIT_VALIDATION_FAILED
 
 
 def _cmd_compare(args: argparse.Namespace) -> int:
@@ -298,11 +350,24 @@ def build_parser() -> argparse.ArgumentParser:
         description="Toolkit Eval Harness - Run and compare evaluation suites",
     )
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
-    p.add_argument(
+    verbosity = p.add_mutually_exclusive_group()
+    verbosity.add_argument(
         "--verbose",
         "-v",
         action="store_true",
         help="Enable verbose logging (DEBUG level)",
+    )
+    verbosity.add_argument(
+        "--quiet",
+        "-q",
+        action="store_true",
+        help="Suppress all logging output (only errors to stderr)",
+    )
+    p.add_argument(
+        "--log-format",
+        choices=["text", "json"],
+        default="text",
+        help="Log output format (default: text)",
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -365,6 +430,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_report.set_defaults(func=_cmd_validate_report)
 
+    check_deps = sub.add_parser(
+        "check-deps", help="Verify all required tools and dependencies are available."
+    )
+    check_deps.set_defaults(func=_cmd_check_deps)
+
     return p
 
 
@@ -379,12 +449,17 @@ def main(argv: list[str] | None = None) -> int:
     """
     parser = build_parser()
     args = parser.parse_args(argv)
-    
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.WARNING,
-        format="%(asctime)s | %(levelname)-8s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        stream=sys.stderr,
+
+    if args.quiet:
+        level = logging.ERROR
+    elif args.verbose:
+        level = logging.DEBUG
+    else:
+        level = logging.WARNING
+
+    setup_logging(
+        level=level,
+        fmt=args.log_format,
     )
     
     try:

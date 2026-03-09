@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  - repo: https://github.com/RobertCraiwordie/pyright-python
+    rev: v1.1.380
+    hooks:
+      - id: pyright
+        additional_dependencies:
+          - pytest>=8.0.0
+          - cryptography>=43.0.0

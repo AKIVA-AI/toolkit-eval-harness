@@ -4,17 +4,19 @@ import argparse
 import json
 import logging
 import platform
-import shutil
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 from . import __version__
 from .compare import CompareBudget, compare_reports
+from .formatters import get_formatter
 from .io import read_bytes, read_json, read_text, write_json, write_text
-from .logging_config import JSONFormatter, setup_logging
+from .logging_config import setup_logging
 from .pack import create_pack, load_suite_from_path, verify_pack
-from .report import EvalReport, write_report_json
+from .plugins import list_scorers
+from .report import EvalReport
 from .runner import run_suite
 from .signing import generate_ed25519_keypair, sign_bytes, verify_bytes
 
@@ -26,59 +28,109 @@ EXIT_UNEXPECTED_ERROR = 3
 EXIT_VALIDATION_FAILED = 4
 
 
+def _emit(data: dict[str, Any], args: argparse.Namespace) -> None:
+    """Format *data* according to ``--format`` and write to stdout or ``--output``."""
+    fmt_name = getattr(args, "format", "json") or "json"
+    output_path = getattr(args, "output", "") or ""
+
+    formatter = get_formatter(fmt_name)
+    text = formatter(data)
+
+    if output_path:
+        out = Path(output_path).resolve()
+        try:
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(text, encoding="utf-8")
+            logger.info("Wrote output to: %s", out)
+        except (OSError, PermissionError) as e:
+            logger.error(
+                "Failed to write output to %s: %s. "
+                "Check that the directory exists and you have write permission.",
+                out,
+                e,
+            )
+            raise
+    else:
+        print(text)
+
+
 def _cmd_pack_create(args: argparse.Namespace) -> int:
     """Create a suite pack zip from a suite directory."""
     suite_dir = Path(args.suite_dir).resolve()
     out = Path(args.out).resolve()
-    
+
     logger.info(f"Creating pack from: {suite_dir}")
-    
+
     try:
         create_pack(suite_dir=suite_dir, out_zip=out)
-        print(str(out))
+        _emit({"created": str(out)}, args)
         logger.info(f"Pack created: {out}")
         return EXIT_SUCCESS
-    except (ValueError, FileNotFoundError, PermissionError, OSError) as e:
-        logger.error(f"Failed to create pack: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Suite directory not found: %s. "
+            "Ensure the directory exists and contains suite.json + cases.jsonl.",
+            suite_dir,
+        )
+        return EXIT_CLI_ERROR
+    except (ValueError, PermissionError, OSError) as e:
+        logger.error("Failed to create pack: %s", e)
         return EXIT_CLI_ERROR
 
 
 def _cmd_pack_inspect(args: argparse.Namespace) -> int:
     """Inspect a suite (dir or zip)."""
     suite_path = Path(args.suite).resolve()
-    
+
     logger.info(f"Inspecting suite: {suite_path}")
-    
+
     try:
         suite = load_suite_from_path(suite_path)
         payload = suite.to_dict()
-        print(json.dumps(payload, indent=2, sort_keys=True))
+        _emit(payload, args)
         logger.info("Suite inspected successfully")
         return EXIT_SUCCESS
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to inspect suite: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Suite not found at '%s'. "
+            "Provide a path to a suite directory (containing suite.json + cases.jsonl) "
+            "or a .zip pack file.",
+            suite_path,
+        )
+        return EXIT_CLI_ERROR
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to inspect suite: %s", e)
         return EXIT_CLI_ERROR
 
 
 def _cmd_pack_verify(args: argparse.Namespace) -> int:
     """Verify pack integrity (hashes)."""
     pack_path = Path(args.suite).resolve()
-    
+
     logger.info(f"Verifying pack: {pack_path}")
-    
+
     try:
         res = verify_pack(pack_zip=pack_path)
         ok = bool(res.get("ok"))
-        print(json.dumps(res, indent=2, sort_keys=True))
-        
+        _emit(res, args)
+
         if ok:
             logger.info("Pack verification passed")
             return EXIT_SUCCESS
         else:
-            logger.warning("Pack verification failed")
+            logger.warning(
+                "Pack verification failed. The pack may have been modified after creation. "
+                "Re-create the pack with 'pack create' to fix hash mismatches."
+            )
             return EXIT_VALIDATION_FAILED
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to verify pack: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Pack file not found: %s. Provide a path to a .zip pack file.",
+            pack_path,
+        )
+        return EXIT_CLI_ERROR
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to verify pack: %s", e)
         return EXIT_CLI_ERROR
 
 
@@ -113,40 +165,59 @@ def _cmd_pack_sign(args: argparse.Namespace) -> int:
     """Sign a pack zip (detached signature JSON)."""
     pack_path = Path(args.suite).resolve()
     private_key_path = Path(args.private_key).resolve()
-    
+
     logger.info(f"Signing pack: {pack_path}")
-    
+
     try:
         payload = read_bytes(pack_path)
         logger.debug("Pack loaded successfully")
-    except (FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read pack: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Pack file not found: %s. Provide a path to an existing .zip pack file.",
+            pack_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except PermissionError as e:
+        logger.error("Failed to read pack: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         private_pem = read_text(private_key_path)
         logger.debug("Private key loaded")
-    except (FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read private key: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Private key not found: %s. Generate one with 'toolkit-eval keygen'.",
+            private_key_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except PermissionError as e:
+        logger.error("Failed to read private key: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         sig = sign_bytes(payload=payload, private_key_pem=private_pem)
         logger.info("Pack signed successfully")
-    except Exception as e:
-        logger.error(f"Failed to sign pack: {e}")
+    except RuntimeError as e:
+        logger.error(
+            "Signing failed: %s. Install the 'cryptography' package: "
+            "pip install 'toolkit-eval-harness[signing]'.",
+            e,
+        )
         return EXIT_CLI_ERROR
-    
+    except Exception as e:
+        logger.error("Failed to sign pack: %s", e)
+        return EXIT_CLI_ERROR
+
     sig_obj = {"algorithm": "ed25519", "signature_b64": sig}
-    
+
     try:
         if args.out:
             write_json(Path(args.out), sig_obj)
         else:
-            print(json.dumps(sig_obj, indent=2, sort_keys=True))
+            _emit(sig_obj, args)
         return EXIT_SUCCESS
     except (OSError, PermissionError, ValueError) as e:
-        logger.error(f"Failed to write signature: {e}")
+        logger.error("Failed to write signature: %s", e)
         return EXIT_CLI_ERROR
 
 
@@ -155,38 +226,54 @@ def _cmd_pack_verify_sig(args: argparse.Namespace) -> int:
     pack_path = Path(args.suite).resolve()
     signature_path = Path(args.signature).resolve()
     public_key_path = Path(args.public_key).resolve()
-    
+
     logger.info(f"Verifying signature for: {pack_path}")
-    
+
     try:
         sig_obj = read_json(signature_path)
         if not isinstance(sig_obj, dict):
             raise ValueError("Signature file must contain a JSON object")
         sig_b64 = str(sig_obj.get("signature_b64") or "")
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read signature: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Signature file not found: %s. "
+            "Create one with 'toolkit-eval pack sign'.",
+            signature_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to read signature: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         public_pem = read_text(public_key_path)
         logger.debug("Public key loaded")
-    except (FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read public key: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Public key not found: %s. Generate one with 'toolkit-eval keygen'.",
+            public_key_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except PermissionError as e:
+        logger.error("Failed to read public key: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         payload = read_bytes(pack_path)
         ok = verify_bytes(payload=payload, signature_b64=sig_b64, public_key_pem=public_pem)
-        
+
         if ok:
             logger.info("Signature verified successfully")
         else:
-            logger.warning("Signature verification failed")
-            
-        print(json.dumps({"ok": ok}, indent=2, sort_keys=True))
+            logger.warning(
+                "Signature verification failed. "
+                "The pack may have been modified or signed with a different key."
+            )
+
+        _emit({"ok": ok}, args)
         return EXIT_SUCCESS if ok else EXIT_VALIDATION_FAILED
     except (FileNotFoundError, PermissionError, Exception) as e:
-        logger.error(f"Failed to verify signature: {e}")
+        logger.error("Failed to verify signature: %s", e)
         return EXIT_CLI_ERROR
 
 
@@ -201,16 +288,31 @@ def _cmd_run(args: argparse.Namespace) -> int:
     try:
         suite = load_suite_from_path(suite_path)
         logger.info(f"Loaded suite: {suite.name}")
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to load suite: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Suite not found at '%s'. "
+            "Provide a path to a suite directory (containing suite.json + cases.jsonl) "
+            "or a .zip pack file.",
+            suite_path,
+        )
+        return EXIT_CLI_ERROR
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to load suite: %s", e)
         return EXIT_CLI_ERROR
 
     start_time = time.monotonic()
     try:
         report = run_suite(suite=suite, predictions_path=predictions_path)
         logger.info("Suite run completed")
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to run suite: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Predictions file not found: %s. "
+            "Provide a JSONL file with one {\"id\": ..., \"prediction\": ...} per line.",
+            predictions_path,
+        )
+        return EXIT_CLI_ERROR
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to run suite: %s", e)
         return EXIT_CLI_ERROR
     elapsed = time.monotonic() - start_time
 
@@ -233,18 +335,20 @@ def _cmd_run(args: argparse.Namespace) -> int:
         f"{fail_count} failed, {elapsed:.3f}s elapsed"
     )
 
-    if args.out:
+    # Legacy --out flag (kept for backward compat)
+    if getattr(args, "out", "") and args.out:
         out = Path(args.out).resolve()
         try:
+            out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(
                 json.dumps(report_dict, indent=2, sort_keys=True), encoding="utf-8"
             )
             logger.info(f"Wrote report to: {out}")
         except (OSError, PermissionError) as e:
-            logger.error(f"Failed to write report: {e}")
+            logger.error("Failed to write report to %s: %s", out, e)
             return EXIT_CLI_ERROR
 
-    print(json.dumps(report_dict, indent=2, sort_keys=True))
+    _emit(report_dict, args)
     return EXIT_SUCCESS
 
 
@@ -264,12 +368,21 @@ def _cmd_check_deps(args: argparse.Namespace) -> int:
     try:
         import cryptography  # noqa: F401
         crypto_ver = cryptography.__version__  # type: ignore[attr-defined]
-        results["checks"].append({"name": "cryptography (signing)", "version": crypto_ver, "ok": True})
+        results["checks"].append({
+            "name": "cryptography (signing)", "version": crypto_ver, "ok": True,
+        })
     except ImportError:
-        results["checks"].append({"name": "cryptography (signing)", "version": None, "ok": False, "note": "optional"})
+        results["checks"].append({
+            "name": "cryptography (signing)", "version": None,
+            "ok": False, "note": "optional",
+        })
+
+    # Report registered scorer plugins
+    scorers = list_scorers()
+    results["registered_scorers"] = scorers
 
     results["all_ok"] = all_ok
-    print(json.dumps(results, indent=2, sort_keys=True))
+    _emit(results, args)
     return EXIT_SUCCESS if all_ok else EXIT_VALIDATION_FAILED
 
 
@@ -277,69 +390,109 @@ def _cmd_compare(args: argparse.Namespace) -> int:
     """Compare candidate report against baseline report."""
     baseline_path = Path(args.baseline).resolve()
     candidate_path = Path(args.candidate).resolve()
-    
+
     logger.info("Comparing reports")
     logger.debug(f"Baseline: {baseline_path}")
     logger.debug(f"Candidate: {candidate_path}")
-    
+
     try:
         baseline_obj = read_json(baseline_path)
         baseline = EvalReport.from_dict(baseline_obj)
         logger.info("Loaded baseline report")
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read baseline: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Baseline report not found: %s. "
+            "Provide a path to a JSON report produced by 'toolkit-eval run'.",
+            baseline_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to read baseline: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         candidate_obj = read_json(candidate_path)
         candidate = EvalReport.from_dict(candidate_obj)
         logger.info("Loaded candidate report")
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read candidate: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Candidate report not found: %s. "
+            "Provide a path to a JSON report produced by 'toolkit-eval run'.",
+            candidate_path,
+        )
         return EXIT_CLI_ERROR
-    
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to read candidate: %s", e)
+        return EXIT_CLI_ERROR
+
     try:
         budget = CompareBudget(max_score_regression_pct=float(args.max_score_regression_pct))
         result = compare_reports(baseline=baseline, candidate=candidate, budget=budget)
-        
+
         if result["passed"]:
             logger.info("Comparison passed")
         else:
-            logger.warning("Comparison failed")
-            
-        print(json.dumps(result, indent=2, sort_keys=True))
+            logger.warning(
+                "Comparison FAILED: score regressed %.2f%% (max allowed: %.2f%%).",
+                result.get("score_regression_pct", 0),
+                budget.max_score_regression_pct,
+            )
+
+        _emit(result, args)
         return EXIT_SUCCESS if result["passed"] else EXIT_VALIDATION_FAILED
     except Exception as e:
-        logger.error(f"Failed to compare reports: {e}")
+        logger.error("Failed to compare reports: %s", e)
         return EXIT_CLI_ERROR
 
 
 def _cmd_validate_report(args: argparse.Namespace) -> int:
     """Validate an eval report JSON has the expected shape."""
     report_path = Path(args.report).resolve()
-    
+
     logger.info(f"Validating report: {report_path}")
-    
+
     try:
         obj = read_json(report_path)
-    except (ValueError, FileNotFoundError, PermissionError) as e:
-        logger.error(f"Failed to read report: {e}")
+    except FileNotFoundError:
+        logger.error(
+            "Report file not found: %s. "
+            "Provide a path to a JSON report produced by 'toolkit-eval run'.",
+            report_path,
+        )
         return EXIT_CLI_ERROR
-    
-    ok = (
-        isinstance(obj, dict)
-        and isinstance(obj.get("suite"), dict)
-        and isinstance(obj.get("summary"), dict)
-        and isinstance(obj.get("cases"), list)
-    )
-    
+    except (ValueError, PermissionError) as e:
+        logger.error("Failed to read report: %s", e)
+        return EXIT_CLI_ERROR
+
+    errors: list[str] = []
+    if not isinstance(obj, dict):
+        errors.append("Root element must be a JSON object (dict).")
+    else:
+        if not isinstance(obj.get("suite"), dict):
+            errors.append("Missing or invalid 'suite' key (expected object).")
+        if not isinstance(obj.get("summary"), dict):
+            errors.append("Missing or invalid 'summary' key (expected object).")
+        if not isinstance(obj.get("cases"), list):
+            errors.append("Missing or invalid 'cases' key (expected array).")
+
+    ok = len(errors) == 0
+
     if ok:
         logger.info("Report validation passed")
     else:
-        logger.warning("Report validation failed")
-    
-    payload = {"ok": ok, "schema": "toolkit_eval_report", "schema_version": 1}
-    print(json.dumps(payload, indent=2, sort_keys=True))
+        logger.warning(
+            "Report validation failed: %s",
+            "; ".join(errors),
+        )
+
+    payload: dict[str, Any] = {
+        "ok": ok,
+        "schema": "toolkit_eval_report",
+        "schema_version": 1,
+    }
+    if errors:
+        payload["errors"] = errors
+    _emit(payload, args)
     return EXIT_SUCCESS if ok else EXIT_VALIDATION_FAILED
 
 
@@ -368,6 +521,20 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["text", "json"],
         default="text",
         help="Log output format (default: text)",
+    )
+    p.add_argument(
+        "--format",
+        "-f",
+        choices=["json", "table", "csv"],
+        default="json",
+        help="Output data format (default: json)",
+    )
+    p.add_argument(
+        "--output",
+        "-o",
+        default="",
+        help="Write output to FILE instead of stdout",
+        metavar="FILE",
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 

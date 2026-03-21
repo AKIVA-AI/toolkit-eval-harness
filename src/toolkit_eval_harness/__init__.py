@@ -3,6 +3,8 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError, version
 
 from .compare import CompareBudget, compare_reports
+from .health import check_health
+from .metrics import MetricsCollector, SuiteMetrics
 from .pack import create_pack, extract_pack, load_suite_from_path
 from .plugins import get_scorer, list_scorers, register_scorer, unregister_scorer
 from .report import EvalReport
@@ -19,7 +21,10 @@ __all__ = [
     "EvalCase",
     "EvalReport",
     "EvalSuite",
+    "MetricsCollector",
+    "SuiteMetrics",
     "__version__",
+    "check_health",
     "compare_reports",
     "create_pack",
     "extract_pack",

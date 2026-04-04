@@ -6,6 +6,7 @@ Maps the 7 top-level CLI subcommands to ToolSpec contracts.
 All commands are READ_ONLY + AUTO — the eval harness reads prediction files,
 runs scoring, and produces reports but never modifies external state.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -51,7 +52,10 @@ TOOLKIT_TOOL_SPECS: dict[str, ToolkitCommandSpec] = {
             input_schema={
                 "type": "object",
                 "properties": {
-                    "output_dir": {"type": "string", "description": "Directory to write keypair files"},
+                    "output_dir": {
+                        "type": "string",
+                        "description": "Directory to write keypair files",
+                    },
                 },
             },
         ),

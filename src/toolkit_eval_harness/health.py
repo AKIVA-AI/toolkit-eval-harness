@@ -55,9 +55,7 @@ def _check_internal_imports() -> dict[str, Any]:
 def _check_temp_io() -> dict[str, Any]:
     """Verify that temp directory I/O works (needed for pack extraction)."""
     try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".json", delete=True
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=True) as f:
             f.write('{"test": true}')
             f.flush()
             # Verify the file exists and is readable
@@ -118,9 +116,7 @@ def check_health() -> dict[str, Any]:
     ]
 
     # healthy = all required (non-optional) checks pass
-    required_ok = all(
-        c["ok"] for c in checks if not c.get("optional", False)
-    )
+    required_ok = all(c["ok"] for c in checks if not c.get("optional", False))
 
     result: dict[str, Any] = {
         "healthy": required_ok,

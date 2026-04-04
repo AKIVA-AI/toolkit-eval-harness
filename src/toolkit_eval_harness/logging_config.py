@@ -23,8 +23,7 @@ from typing import Any
 # Fields that belong to the standard LogRecord and should NOT be
 # forwarded as user-supplied ``extra`` data in JSON output.
 _BUILTIN_ATTRS = frozenset(
-    logging.LogRecord("", 0, "", 0, "", (), None).__dict__.keys()
-    | {"message", "asctime"}
+    logging.LogRecord("", 0, "", 0, "", (), None).__dict__.keys() | {"message", "asctime"}
 )
 
 

@@ -6,6 +6,7 @@ Three-tier hierarchy (mirrors Akiva platform pattern):
   Level 1 — Toolkit config (pyproject.toml / config file)
   Level 2 — CLI overrides (argv flags)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -27,14 +28,14 @@ class ToolkitConfigContract:
     version: str = "1.0.0"
 
     # ── Runtime behaviour ─────────────────────────────────────────────────────
-    log_format: str = "json"          # 'json' | 'text'
+    log_format: str = "json"  # 'json' | 'text'
     structured_logging: bool = True
-    output_format: str = "json"       # 'json' | 'text' | 'markdown'
+    output_format: str = "json"  # 'json' | 'text' | 'markdown'
 
     # ── Eval-harness specific ─────────────────────────────────────────────────
-    max_workers: int = 4              # parallel evaluation workers
-    fail_fast: bool = False           # stop on first failure
-    coverage_threshold: float = 0.0   # minimum eval coverage 0.0–1.0
+    max_workers: int = 4  # parallel evaluation workers
+    fail_fast: bool = False  # stop on first failure
+    coverage_threshold: float = 0.0  # minimum eval coverage 0.0–1.0
 
     # ── Extension ─────────────────────────────────────────────────────────────
     extra: dict[str, Any] = field(default_factory=dict)

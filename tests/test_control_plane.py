@@ -6,29 +6,30 @@ Coverage:
   - config: build_config_hierarchy (defaults, toolkit config, CLI overrides)
   - tool_specs: TOOLKIT_TOOL_SPECS covers all 6 commands, get_tool_spec lookup
 """
+
 from __future__ import annotations
 
 import pytest
 
-from toolkit_eval_harness.control_plane.contracts import (
-    ApprovalPolicy,
-    AuthorityBoundary,
-    PermissionScope,
-    ToolSpec,
-    _HAS_EXECUTION_CONTRACTS,
-)
 from toolkit_eval_harness.control_plane.config import (
     CONFIG_LEVELS,
     ToolkitConfigContract,
     build_config_hierarchy,
+)
+from toolkit_eval_harness.control_plane.contracts import (
+    _HAS_EXECUTION_CONTRACTS,
+    ApprovalPolicy,
+    AuthorityBoundary,
+    PermissionScope,
+    ToolSpec,
 )
 from toolkit_eval_harness.control_plane.tool_specs import (
     TOOLKIT_TOOL_SPECS,
     get_tool_spec,
 )
 
-
 # ── contracts ─────────────────────────────────────────────────────────────────
+
 
 class TestPermissionScope:
     def test_values(self) -> None:
@@ -43,7 +44,9 @@ class TestAuthorityBoundary:
         assert b.is_denied()
 
     def test_needs_approval(self) -> None:
-        b = AuthorityBoundary(scope=PermissionScope.FULL_ACCESS, approval=ApprovalPolicy.REQUIRE_APPROVAL)
+        b = AuthorityBoundary(
+            scope=PermissionScope.FULL_ACCESS, approval=ApprovalPolicy.REQUIRE_APPROVAL
+        )
         assert b.needs_approval()
 
     def test_auto_neither(self) -> None:
@@ -64,6 +67,7 @@ class TestFrameworkFlag:
 
 
 # ── config ────────────────────────────────────────────────────────────────────
+
 
 class TestConfigLevels:
     def test_ordering(self) -> None:
@@ -101,6 +105,7 @@ class TestBuildConfigHierarchy:
 
 
 # ── tool_specs ────────────────────────────────────────────────────────────────
+
 
 class TestToolkitToolSpecs:
     EXPECTED_COMMANDS = {"keygen", "pack", "run", "compare", "validate-report", "check-deps"}

@@ -229,8 +229,10 @@ class TestRunnerAdversarialPredictions:
         )
         preds_path = tmp_path / "preds.jsonl"
         preds_path.write_text(
-            json.dumps({"id": "c1", "prediction": "first"}) + "\n"
-            + json.dumps({"id": "c1", "prediction": "second"}) + "\n",
+            json.dumps({"id": "c1", "prediction": "first"})
+            + "\n"
+            + json.dumps({"id": "c1", "prediction": "second"})
+            + "\n",
             encoding="utf-8",
         )
         suite = load_suite_from_path(suite_dir)

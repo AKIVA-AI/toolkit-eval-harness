@@ -9,8 +9,6 @@ Coverage:
 
 from __future__ import annotations
 
-import pytest
-
 from toolkit_eval_harness.control_plane.config import (
     CONFIG_LEVELS,
     ToolkitConfigContract,
@@ -21,7 +19,6 @@ from toolkit_eval_harness.control_plane.contracts import (
     ApprovalPolicy,
     AuthorityBoundary,
     PermissionScope,
-    ToolSpec,
 )
 from toolkit_eval_harness.control_plane.tool_specs import (
     TOOLKIT_TOOL_SPECS,

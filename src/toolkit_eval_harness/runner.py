@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .metrics import SuiteMetrics
+from .plugins import get_scorer
 from .report import EvalReport
 from .scoring import JSONSchema, exact_match_score, json_required_keys_score, parse_json_schema
 from .suite import EvalSuite
@@ -25,6 +26,14 @@ def _read_predictions(path: Path) -> dict[str, Any]:
     return preds
 
 
+def _resolve_plugin_scorers(scoring: dict[str, Any]) -> list[str]:
+    """Return list of plugin scorer names declared in suite.scoring['scorers']."""
+    raw = scoring.get("scorers")
+    if isinstance(raw, list):
+        return [str(s) for s in raw]
+    return []
+
+
 def run_suite(*, suite: EvalSuite, predictions_path: Path) -> EvalReport:
     logger.info(
         "Suite execution started: name=%s, cases=%d",
@@ -40,6 +49,15 @@ def run_suite(*, suite: EvalSuite, predictions_path: Path) -> EvalReport:
         schema = parse_json_schema(dict(suite.scoring.get("json_schema") or {}))
         logger.debug("JSON schema scoring enabled with keys: %s", schema.required_keys)
 
+    plugin_scorer_names = _resolve_plugin_scorers(suite.scoring)
+    plugin_scorers: list[tuple[str, Any]] = []
+    for name in plugin_scorer_names:
+        try:
+            plugin_scorers.append((name, get_scorer(name)))
+            logger.debug("Plugin scorer loaded: %s", name)
+        except KeyError:
+            logger.warning("Plugin scorer '%s' not found in registry, skipping", name)
+
     case_results: list[dict[str, Any]] = []
     metrics = SuiteMetrics()
 
@@ -52,18 +70,38 @@ def run_suite(*, suite: EvalSuite, predictions_path: Path) -> EvalReport:
         if schema is not None:
             json_score, json_meta = json_required_keys_score(schema=schema, predicted=predicted)
             json_meta = {"enabled": True, **json_meta}
-        case_score = max(exact_score, json_score)
+
+        # Run plugin scorers and collect results
+        plugin_results: dict[str, dict[str, Any]] = {}
+        plugin_best_score = 0.0
+        for scorer_name, scorer_func in plugin_scorers:
+            try:
+                p_score, p_meta = scorer_func(
+                    expected=case.expected, predicted=predicted
+                )
+                plugin_results[scorer_name] = {"score": p_score, **p_meta}
+                plugin_best_score = max(plugin_best_score, p_score)
+            except Exception:  # noqa: BLE001
+                logger.warning(
+                    "Plugin scorer '%s' failed on case %s", scorer_name, case.id,
+                    exc_info=True,
+                )
+                plugin_results[scorer_name] = {"score": 0.0, "error": True}
+
+        case_score = max(exact_score, json_score, plugin_best_score)
         case_elapsed = time.monotonic() - case_start
 
-        case_results.append(
-            {
-                "id": case.id,
-                "tags": list(case.tags),
-                "score": case_score,
-                "exact": exact_meta,
-                "json": json_meta,
-            }
-        )
+        result: dict[str, Any] = {
+            "id": case.id,
+            "tags": list(case.tags),
+            "score": case_score,
+            "exact": exact_meta,
+            "json": json_meta,
+        }
+        if plugin_results:
+            result["plugins"] = plugin_results
+
+        case_results.append(result)
 
         metrics.record_case(score=case_score, elapsed=case_elapsed)
 

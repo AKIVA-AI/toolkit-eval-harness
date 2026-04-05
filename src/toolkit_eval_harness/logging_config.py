@@ -59,23 +59,37 @@ TEXT_FORMAT = "%(asctime)s | %(levelname)-8s | %(message)s"
 TEXT_DATEFMT = "%Y-%m-%d %H:%M:%S"
 
 
-def setup_logging(*, level: int = logging.WARNING, fmt: str = "text") -> None:
+def setup_logging(
+    *, level: int = logging.WARNING, fmt: str = "text", log_file: str = ""
+) -> None:
     """Configure the root logger.
 
     Args:
         level: Logging level (e.g. ``logging.DEBUG``).
         fmt: ``"text"`` for human-readable or ``"json"`` for JSON lines.
+        log_file: Optional file path to write logs to (in addition to stderr).
     """
     root = logging.getLogger()
     # Remove existing handlers to avoid duplicate output on re-init.
     for handler in root.handlers[:]:
         root.removeHandler(handler)
 
-    handler = logging.StreamHandler(sys.stderr)
+    formatter: logging.Formatter
     if fmt == "json":
-        handler.setFormatter(JSONFormatter())
+        formatter = JSONFormatter()
     else:
-        handler.setFormatter(logging.Formatter(TEXT_FORMAT, datefmt=TEXT_DATEFMT))
+        formatter = logging.Formatter(TEXT_FORMAT, datefmt=TEXT_DATEFMT)
+
+    stderr_handler = logging.StreamHandler(sys.stderr)
+    stderr_handler.setFormatter(formatter)
+    root.addHandler(stderr_handler)
+
+    if log_file:
+        from pathlib import Path
+
+        Path(log_file).parent.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(formatter)
+        root.addHandler(file_handler)
 
     root.setLevel(level)
-    root.addHandler(handler)

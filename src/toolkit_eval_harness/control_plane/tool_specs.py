@@ -48,7 +48,7 @@ TOOLKIT_TOOL_SPECS: dict[str, ToolkitCommandSpec] = {
         command="keygen",
         spec=_make_spec(
             name="keygen",
-            description="Generate an Ed25519 keypair for signing suite packs. Writes key files to disk.",
+            description="Generate an Ed25519 keypair for signing suite packs.",
             input_schema={
                 "type": "object",
                 "properties": {

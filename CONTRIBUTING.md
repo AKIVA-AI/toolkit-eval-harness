@@ -48,13 +48,13 @@ pytest -x -q           # Tests (must pass, no regressions)
 pytest -x -q
 
 # With coverage report
-pytest --cov=src --cov-report=term-missing --cov-fail-under=70
+pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 
 # Single test file
 pytest tests/test_cli.py -v
 ```
 
-Coverage threshold is 70%. Do not submit changes that drop coverage below this.
+Coverage threshold is 80%. Do not submit changes that drop coverage below this.
 
 ## Project Layout
 

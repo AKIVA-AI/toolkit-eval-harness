@@ -15,22 +15,22 @@ The Toolkit Eval Harness is a lightweight, powerful evaluation tool designed for
 - **Digital Signatures**: Optional cryptographic signing for integrity verification
 
 ### Comprehensive Evaluation
-- **Multiple Scoring Methods**: Exact match, JSON schema validation, custom metrics
+- **Multiple Scoring Methods**: Exact match, JSON schema validation, plugin scorers
 - **Flexible Test Cases**: Support for various input/output formats
 - **Tagging System**: Organize tests by category, difficulty, or use case
-- **Batch Processing**: Efficient evaluation of large test suites
+- **Plugin System**: Extend with custom scorers via entry points or programmatic registration
 
 ### Enterprise Integration
 - **CI/CD Friendly**: JSON reports with exit codes for pipeline integration
 - **Regression Detection**: Automated comparison against baseline evaluations
-- **Audit Trails**: Complete evaluation history and provenance tracking
-- **Performance Metrics**: Latency, throughput, and resource usage tracking
+- **Multiple Output Formats**: JSON, table, and CSV output for different workflows
+- **Execution Metadata**: Timing, tool version, and platform info in reports
 
 ### Security and Compliance
 - **Package Signing**: Ed25519 cryptographic signatures for integrity
 - **Hash Verification**: SHA-256 checksums for all packages
-- **Access Control**: Role-based permissions for suite management
-- **Audit Logging**: Complete evaluation audit trails
+- **Zip Path Traversal Protection**: Safe extraction with member path validation
+- **Health Checks**: Built-in dependency and environment verification
 
 ## Quick Start
 
@@ -71,8 +71,11 @@ toolkit-eval compare --baseline baseline.json --candidate report.json
 - `pack verify` - Verify pack integrity (hashes)
 - `pack sign` - Sign suite packs (optional)
 - `pack verify-signature` - Verify pack signatures
+- `pack inspect` - Show pack metadata
 - `run` - Run evaluation against predictions
 - `compare` - Compare candidate report to baseline (CI gating)
+- `validate-report` - Validate a report JSON file
+- `check-deps` - Health check and environment verification
 - `keygen` - Generate signing keys
 
 ## Exit Codes

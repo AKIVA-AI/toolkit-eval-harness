@@ -19,10 +19,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
     - run: pip install -e ".[dev]"
-    - run: pytest --cov=src --cov-report=xml --cov-fail-under=70 -v
+    - run: pytest --cov=src --cov-report=xml --cov-fail-under=80 -v
     - uses: codecov/codecov-action@v4
       if: matrix.python-version == '3.11'
-      continue-on-error: true
       with:
         fail_ci_if_error: false
 
@@ -46,6 +45,21 @@ jobs:
         python-version: '3.11'
     - run: pip install ruff
     - run: ruff check .
+
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - run: pip install -e ".[dev]"
+    - run: pip install cyclonedx-bom
+    - run: cyclonedx-py environment --output sbom.json --output-format json
+    - uses: actions/upload-artifact@v4
+      with:
+        name: sbom
+        path: sbom.json
 
   build:
     runs-on: ubuntu-latest

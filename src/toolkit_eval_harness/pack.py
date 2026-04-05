@@ -79,7 +79,15 @@ def verify_pack(*, pack_zip: Path) -> dict[str, object]:
 
 def extract_pack(*, pack_zip: Path, dest_dir: Path) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
+    resolved_dest = dest_dir.resolve()
     with zipfile.ZipFile(pack_zip, "r") as zf:
+        for member in zf.infolist():
+            member_path = (resolved_dest / member.filename).resolve()
+            if not str(member_path).startswith(str(resolved_dest)):
+                raise ValueError(
+                    f"zip_path_traversal_blocked:{member.filename} "
+                    f"resolves outside destination directory"
+                )
         zf.extractall(dest_dir)
     return dest_dir
 

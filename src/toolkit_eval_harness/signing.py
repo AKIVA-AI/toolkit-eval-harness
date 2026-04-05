@@ -56,8 +56,18 @@ def verify_bytes(*, payload: bytes, signature_b64: str, public_key_pem: str) -> 
     public_key = serialization.load_pem_public_key(public_key_pem.encode("utf-8"))
     if not isinstance(public_key, Ed25519PublicKey):
         raise ValueError("public_key_not_ed25519")
+    import binascii
+
     try:
         public_key.verify(base64.b64decode(signature_b64.encode("ascii")), payload)
         return True
-    except Exception:
+    except (binascii.Error, ValueError) as exc:
+        import logging
+
+        logging.getLogger(__name__).debug("Signature verification failed (decode): %s", exc)
+        return False
+    except Exception as exc:  # noqa: BLE001 — cryptography.exceptions.InvalidSignature
+        import logging
+
+        logging.getLogger(__name__).debug("Signature verification failed: %s", exc)
         return False

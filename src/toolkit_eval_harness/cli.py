@@ -529,6 +529,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Log output format (default: text)",
     )
     p.add_argument(
+        "--log-file",
+        default="",
+        help="Write logs to FILE in addition to stderr",
+        metavar="FILE",
+    )
+    p.add_argument(
         "--format",
         "-f",
         choices=["json", "table", "csv"],
@@ -633,6 +639,7 @@ def main(argv: list[str] | None = None) -> int:
     setup_logging(
         level=level,
         fmt=args.log_format,
+        log_file=getattr(args, "log_file", "") or "",
     )
 
     try:

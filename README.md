@@ -1,5 +1,7 @@
 # Toolkit Eval Harness
 
+[![PyPI](https://img.shields.io/pypi/v/toolkit-eval-harness.svg)](https://pypi.org/project/toolkit-eval-harness/)
+[![Python versions](https://img.shields.io/pypi/pyversions/toolkit-eval-harness.svg)](https://pypi.org/project/toolkit-eval-harness/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 **An eval regression gate with signed evidence.** It decides, with a confidence interval,
@@ -24,8 +26,7 @@ are optional extras and are off unless a run opts in.
 
 ## Status
 
-Version 1.0.0. It is not yet published on PyPI; install it from source. The release workflow
-is ready and waits on the one-time PyPI setup in [RELEASING.md](RELEASING.md).
+Version 1.0.0, published on PyPI as `toolkit-eval-harness` (see [Install](#install)).
 
 | Capability | Status | Notes |
 |---|---|---|
@@ -52,13 +53,15 @@ is ready and waits on the one-time PyPI setup in [RELEASING.md](RELEASING.md).
 Requires Python 3.10+.
 
 ```bash
-git clone https://github.com/AKIVA-AI/toolkit-eval-harness.git
-cd toolkit-eval-harness
-pip install -e .              # core, no runtime dependencies
-pip install -e ".[signing]"   # adds pack signing (cryptography)
-pip install -e ".[inspect]"   # reads Zstandard-compressed Inspect .eval logs (zstandard)
-pip install -e ".[dev]"       # tests, lint, type-check
+pip install toolkit-eval-harness                 # core, no runtime dependencies
+pip install "toolkit-eval-harness[signing]"      # adds pack signing (cryptography)
+pip install "toolkit-eval-harness[inspect]"      # reads Zstandard-compressed Inspect .eval logs (zstandard)
+pip install "toolkit-eval-harness[jsonschema]"   # adds the json_schema scorer (jsonschema)
+pip install "toolkit-eval-harness[judge]"        # adds the embedding and LLM-judge scorers (LiteLLM)
+toolkit-eval --help
 ```
+
+To work on the code, see [Development](#development).
 
 ## 5-minute example
 
@@ -69,8 +72,11 @@ prediction files. The predictions are **illustrative, not model outputs**: a scr
 (`make_predictions.py`) wrote a "baseline" that answers 17 of 20 correctly and a "candidate"
 that answers 16, fixing one baseline mistake and making two new ones.
 
+Run it from the root of a clone of this repository, which holds the example files:
+
 ```bash
-pip install -e .
+git clone https://github.com/AKIVA-AI/toolkit-eval-harness.git
+cd toolkit-eval-harness
 
 # 1. Score both prediction files (exit 1 = some cases failed; the report is still written)
 toolkit-eval run --suite examples/gsm8k-20 \
@@ -101,7 +107,12 @@ numbers.
 
 3. (Optional) sign the comparison as evidence with
 [toolkit-ml-provenance](https://github.com/AKIVA-AI/toolkit-ml-provenance):
-`toolkit-mlsbom sign-file compare.json`.
+
+```bash
+pip install "toolkit-ml-provenance[signing]"
+toolkit-mlsbom keygen --private-key signing.pem --public-key signing.pub
+toolkit-mlsbom sign-file compare.json --key signing.pem   # -> compare.json.sig.json
+```
 
 Already using promptfoo, Inspect AI or DeepEval? Replace step 1 with
 `toolkit-eval import promptfoo results.json --out candidate.json` (or `inspect` / `deepeval`),
@@ -110,7 +121,7 @@ see [Gating results from other tools](#gating-results-from-other-tools). In CI, 
 
 ### Signed suite packs
 
-Needs the `signing` extra (`pip install -e ".[signing]"`).
+Needs the `signing` extra (`pip install "toolkit-eval-harness[signing]"`).
 
 ```bash
 toolkit-eval pack create --suite-dir examples/suite --out packs/capitals.zip
@@ -180,7 +191,7 @@ the name) names the result, so the same scorer can run twice with different opti
 | `fuzzy` | Levenshtein similarity `1 - distance / max(len)` >= `threshold` | `threshold` (0.9), `normalize`: `basic` (lower-case, squash spaces), `squad` or `none` |
 | `regex` | `pattern` (or the case's `expected`) matches | `pattern`, `mode`: `search` or `fullmatch`, `ignore_case` |
 | `numeric` | `math.isclose(prediction, expected, rel_tol, abs_tol)` | `abs_tol` (0), `rel_tol` (1e-9), `extract`: `full`, `first` or `last` number in the text |
-| `json_schema` | prediction (object, or string holding JSON) validates against `schema` | `schema`; needs `pip install -e ".[jsonschema]"` |
+| `json_schema` | prediction (object, or string holding JSON) validates against `schema` | `schema`; needs `pip install "toolkit-eval-harness[jsonschema]"` |
 | `embedding` | cosine similarity of LiteLLM embeddings >= `threshold` | `model`, `threshold` (0.8) |
 | `llm_judge` | the judge's score (0-1, parsed from its JSON reply) >= `threshold` | `model`, `rubric`, `prompt`, `threshold` (1.0), `temperature` (0) |
 
@@ -191,8 +202,8 @@ the name) names the result, so the same scorer can run twice with different opti
 - Unknown options, invalid thresholds and invalid regexes or schemas are input errors (exit 2).
   A scorer that raises on one case fails that case.
 - **Network scorers are off by default.** `embedding` and `llm_judge` call a model through
-  [LiteLLM](https://github.com/BerriAI/litellm) (`pip install -e ".[judge]"`, provider keys in
-  the usual LiteLLM environment variables). A suite that lists them is refused unless you pass
+  [LiteLLM](https://github.com/BerriAI/litellm) (`pip install "toolkit-eval-harness[judge]"`,
+  provider keys in the usual LiteLLM environment variables). A suite that lists them is refused unless you pass
   `run --allow-network-scorers`. The report records the judge's model, prompt template and its
   SHA-256, rubric and temperature (`details.scorer_config`), and for every case the rendered
   prompt, the raw reply and the parsed reason. Judge results are only as reliable as the judge
@@ -253,8 +264,8 @@ toolkit-eval compare --baseline baseline.json --candidate candidate.json
 - `import` exits 1 when any imported case failed (the report is still written), like `run`.
   The envelope kind is `eval.import`.
 - Recent Inspect `.eval` logs are Zstandard-compressed. Python 3.14's `zipfile` reads them;
-  on older Pythons install the `inspect` extra (`pip install -e ".[inspect]"`, adds
-  `zstandard`) or convert with `inspect log convert --to json`.
+  on older Pythons install the `inspect` extra
+  (`pip install "toolkit-eval-harness[inspect]"`, adds `zstandard`) or convert with `inspect log convert --to json`.
 
 The formats are pinned by fixtures generated with the real tools; see
 [tests/fixtures/importers/README.md](tests/fixtures/importers/README.md).
@@ -311,7 +322,7 @@ steps:
   - uses: actions/checkout@v4
   # ... produce candidate.json with `toolkit-eval run --out` or `toolkit-eval import`,
   # and fetch baseline.json (for example from your main branch's artifacts)
-  - uses: AKIVA-AI/toolkit-eval-harness@<commit-sha>   # pin a SHA; release tags come later
+  - uses: AKIVA-AI/toolkit-eval-harness@v1.0.0
     id: gate
     with:
       baseline: baseline.json
@@ -417,8 +428,10 @@ Stdout output (`--format json|table|csv`) is unchanged.
 [toolkit-ml-provenance](https://github.com/AKIVA-AI/toolkit-ml-provenance)):
 
 ```bash
-toolkit-mlsbom sign-file report.json     # Ed25519 key, or Sigstore keyless with its [sigstore] extra
-toolkit-mlsbom verify-file report.json
+pip install "toolkit-ml-provenance[signing]"
+toolkit-mlsbom keygen --private-key signing.pem --public-key signing.pub
+toolkit-mlsbom sign-file report.json --key signing.pem   # or --sigstore, with its [sigstore] extra
+toolkit-mlsbom verify-file report.json --public-key signing.pub
 ```
 
 ## Plugin scorers
@@ -435,6 +448,19 @@ from toolkit_eval_harness import load_suite_from_path, run_suite
 suite = load_suite_from_path(Path("examples/suite"))
 report = run_suite(suite=suite, predictions_path=Path("examples/preds.jsonl"))
 print(report.summary)
+```
+
+## Development
+
+Install from source in editable mode, with the test, lint and type-check tools:
+
+```bash
+git clone https://github.com/AKIVA-AI/toolkit-eval-harness.git
+cd toolkit-eval-harness
+pip install -e ".[dev]"
+pytest -q
+ruff check .
+pyright src/
 ```
 
 ## Contributing and security

@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2026-09-26
 
-First stable release: an eval regression gate with signed evidence.
+First stable release: an eval regression gate with signed evidence. First release on PyPI
+(published 2026-10-02): `pip install toolkit-eval-harness`.
 
 ### Release and project files
 

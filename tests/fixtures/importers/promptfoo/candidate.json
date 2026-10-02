@@ -1,0 +1,743 @@
+{
+  "evalId": "eval-KdO-2026-09-26T17:16:15",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-09-26T17:16:15.579Z",
+    "prompts": [
+      {
+        "id": "43a772a28b0874ac0bf4522fcd68cff3801793fa59a4a911a227265bac2ab79b",
+        "raw": "Answer: {{answer}} Tokyo green",
+        "label": "Answer: {{answer}} Tokyo green",
+        "provider": "echo",
+        "metrics": {
+          "score": 3,
+          "testPassCount": 3,
+          "testFailCount": 1,
+          "testErrorCount": 0,
+          "assertPassCount": 4,
+          "assertFailCount": 1,
+          "totalLatencyMs": 5,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 4,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "Paris"
+              }
+            }
+          ]
+        },
+        "id": "1f710d8e-6d1d-4d91-84e7-444324216264",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer: Paris Tokyo green",
+          "label": "Answer: {{answer}} Tokyo green",
+          "config": {}
+        },
+        "promptId": "43a772a28b0874ac0bf4522fcd68cff3801793fa59a4a911a227265bac2ab79b",
+        "promptIdx": 0,
+        "provider": {
+          "id": "echo",
+          "label": ""
+        },
+        "response": {
+          "output": "Answer: Paris Tokyo green",
+          "raw": "Answer: Paris Tokyo green",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "capital of France",
+          "vars": {
+            "answer": "Paris"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "Paris"
+            }
+          ],
+          "metadata": {
+            "topic": "geo"
+          },
+          "options": {}
+        },
+        "testIdx": 0,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "answer": "Paris"
+        },
+        "metadata": {
+          "topic": "geo",
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "Tokyo"
+              }
+            }
+          ]
+        },
+        "id": "5a4f57a2-44ea-4139-8c49-baa111130987",
+        "latencyMs": 1,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer: Kyoto Tokyo green",
+          "label": "Answer: {{answer}} Tokyo green",
+          "config": {}
+        },
+        "promptId": "43a772a28b0874ac0bf4522fcd68cff3801793fa59a4a911a227265bac2ab79b",
+        "promptIdx": 0,
+        "provider": {
+          "id": "echo",
+          "label": ""
+        },
+        "response": {
+          "output": "Answer: Kyoto Tokyo green",
+          "raw": "Answer: Kyoto Tokyo green",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "capital of Japan",
+          "vars": {
+            "answer": "Kyoto"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "Tokyo"
+            }
+          ],
+          "metadata": {
+            "topic": "geo"
+          },
+          "options": {}
+        },
+        "testIdx": 1,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "answer": "Kyoto"
+        },
+        "metadata": {
+          "topic": "geo",
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "error": "Expected output \"Answer: 4 Tokyo green\" to equal \"Answer: 4\"",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Expected output \"Answer: 4 Tokyo green\" to equal \"Answer: 4\"",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Expected output \"Answer: 4 Tokyo green\" to equal \"Answer: 4\"",
+              "assertion": {
+                "type": "equals",
+                "value": "Answer: 4"
+              }
+            }
+          ]
+        },
+        "id": "04e31c53-627e-4b71-8213-d75a1f69c8bb",
+        "latencyMs": 1,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer: 4 Tokyo green",
+          "label": "Answer: {{answer}} Tokyo green",
+          "config": {}
+        },
+        "promptId": "43a772a28b0874ac0bf4522fcd68cff3801793fa59a4a911a227265bac2ab79b",
+        "promptIdx": 0,
+        "provider": {
+          "id": "echo",
+          "label": ""
+        },
+        "response": {
+          "output": "Answer: 4 Tokyo green",
+          "raw": "Answer: 4 Tokyo green",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "description": "two plus two",
+          "vars": {
+            "answer": "4"
+          },
+          "assert": [
+            {
+              "type": "equals",
+              "value": "Answer: 4"
+            }
+          ],
+          "metadata": {
+            "topic": "math"
+          },
+          "options": {}
+        },
+        "testIdx": 2,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "answer": "4"
+        },
+        "metadata": {
+          "topic": "math",
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "icontains",
+                "value": "BLUE",
+                "weight": 1
+              }
+            },
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "green",
+                "weight": 1
+              }
+            }
+          ]
+        },
+        "id": "2645bb61-85a3-4a64-9dc9-08f75506a45d",
+        "latencyMs": 1,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer: blue sky Tokyo green",
+          "label": "Answer: {{answer}} Tokyo green",
+          "config": {}
+        },
+        "promptId": "43a772a28b0874ac0bf4522fcd68cff3801793fa59a4a911a227265bac2ab79b",
+        "promptIdx": 0,
+        "provider": {
+          "id": "echo",
+          "label": ""
+        },
+        "response": {
+          "output": "Answer: blue sky Tokyo green",
+          "raw": "Answer: blue sky Tokyo green",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "weighted partial",
+          "vars": {
+            "answer": "blue sky"
+          },
+          "assert": [
+            {
+              "type": "icontains",
+              "value": "BLUE",
+              "weight": 1
+            },
+            {
+              "type": "contains",
+              "value": "green",
+              "weight": 1
+            }
+          ],
+          "metadata": {
+            "topic": "color"
+          },
+          "options": {}
+        },
+        "testIdx": 3,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "answer": "blue sky"
+        },
+        "metadata": {
+          "topic": "color",
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      }
+    ],
+    "stats": {
+      "successes": 3,
+      "failures": 1,
+      "errors": 0,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 4,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 26,
+      "evaluationDurationMs": 26
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "toolkit-eval-harness importer sample (echo provider, offline)",
+    "prompts": [
+      "Answer: {{answer}} Tokyo green"
+    ],
+    "providers": [
+      "echo"
+    ],
+    "tests": [
+      {
+        "description": "capital of France",
+        "vars": {
+          "answer": "Paris"
+        },
+        "assert": [
+          {
+            "type": "contains",
+            "value": "Paris"
+          }
+        ],
+        "metadata": {
+          "topic": "geo"
+        }
+      },
+      {
+        "description": "capital of Japan",
+        "vars": {
+          "answer": "Kyoto"
+        },
+        "assert": [
+          {
+            "type": "contains",
+            "value": "Tokyo"
+          }
+        ],
+        "metadata": {
+          "topic": "geo"
+        }
+      },
+      {
+        "description": "two plus two",
+        "vars": {
+          "answer": "4"
+        },
+        "assert": [
+          {
+            "type": "equals",
+            "value": "Answer: 4"
+          }
+        ],
+        "metadata": {
+          "topic": "math"
+        }
+      },
+      {
+        "description": "weighted partial",
+        "vars": {
+          "answer": "blue sky"
+        },
+        "assert": [
+          {
+            "type": "icontains",
+            "value": "BLUE",
+            "weight": 1
+          },
+          {
+            "type": "contains",
+            "value": "green",
+            "weight": 1
+          }
+        ],
+        "metadata": {
+          "topic": "color"
+        }
+      }
+    ],
+    "env": {},
+    "outputPath": [
+      "candidate.json"
+    ],
+    "extensions": [],
+    "metadata": {},
+    "evaluateOptions": {}
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.123.1",
+    "nodeVersion": "v22.23.3",
+    "platform": "linux",
+    "arch": "x64",
+    "exportedAt": "2026-09-26T17:16:15.635Z",
+    "evaluationCreatedAt": "2026-09-26T17:16:15.579Z"
+  },
+  "vars": [
+    "answer"
+  ],
+  "runtimeOptions": {
+    "eventSource": "cli",
+    "showProgressBar": true,
+    "repeat": 1,
+    "maxConcurrency": 4,
+    "cache": false
+  }
+}

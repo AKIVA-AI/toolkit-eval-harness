@@ -1,0 +1,50 @@
+﻿version: '3.8'
+
+services:
+  eval-harness:
+    build: .
+    container_name: toolkit-eval-harness
+    volumes:
+      - ./packs:/app/packs
+      - ./results:/app/results
+      - ./suites:/app/suites
+      - ./examples:/app/examples
+    command: tail -f /dev/null
+
+  # Service for creating suite packs
+  pack-create:
+    build: .
+    container_name: eval-pack-create
+    volumes:
+      - ./packs:/app/packs
+      - ./suites:/app/suites
+    command: >
+      toolkit-eval pack create
+      --suite-dir /app/suites
+      --out /app/packs/suite.zip
+
+  # Service for running evaluations
+  eval-run:
+    build: .
+    container_name: eval-run
+    volumes:
+      - ./packs:/app/packs
+      - ./results:/app/results
+    command: >
+      toolkit-eval run
+      --suite /app/packs/suite.zip
+      --predictions /app/results/predictions.jsonl
+      --out /app/results/evaluation.json
+
+  # Service for regression checks
+  regression-check:
+    build: .
+    container_name: eval-regression
+    volumes:
+      - ./results:/app/results
+    command: >
+      toolkit-eval compare
+      --baseline /app/results/baseline.json
+      --candidate /app/results/current.json
+
+

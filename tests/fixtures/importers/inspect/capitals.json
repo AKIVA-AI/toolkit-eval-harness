@@ -1,0 +1,1458 @@
+{
+  "version": 2,
+  "status": "success",
+  "eval": {
+    "eval_id": "ccsGtSKKen5upc8UKamPVf",
+    "run_id": "8tZNqDjbM7GscjnaN9wZ7x",
+    "created": "2026-09-26T17:17:28+00:00",
+    "task": "capitals",
+    "task_id": "7uTpswvVhgGrf7Y8semY6m",
+    "task_version": 0,
+    "task_file": "task.py",
+    "task_display_name": "capitals",
+    "task_registry_name": "capitals",
+    "task_attribs": {},
+    "task_args": {},
+    "task_args_passed": {},
+    "dataset": {
+      "samples": 3,
+      "sample_ids": [
+        "fr",
+        "jp",
+        "math-1"
+      ],
+      "shuffled": false
+    },
+    "model": "mockllm/model",
+    "model_generate_config": {},
+    "model_args": {},
+    "config": {
+      "epochs": 1,
+      "fail_on_error": true,
+      "continue_on_fail": false,
+      "score_on_error": false,
+      "sandbox_cleanup": true,
+      "sandbox_prebuilt": false,
+      "log_samples": true,
+      "log_realtime": true,
+      "log_images": true,
+      "log_shared": 0,
+      "score_display": true
+    },
+    "packages": {
+      "inspect_ai": "0.3.270"
+    },
+    "scorers": [
+      {
+        "name": "includes",
+        "options": {},
+        "metrics": [
+          {
+            "name": "inspect_ai/accuracy",
+            "options": {}
+          },
+          {
+            "name": "inspect_ai/stderr",
+            "options": {}
+          }
+        ],
+        "metadata": {}
+      },
+      {
+        "name": "match",
+        "options": {
+          "location": "any"
+        },
+        "metrics": [
+          {
+            "name": "inspect_ai/accuracy",
+            "options": {}
+          },
+          {
+            "name": "inspect_ai/stderr",
+            "options": {}
+          }
+        ],
+        "metadata": {}
+      }
+    ]
+  },
+  "plan": {
+    "name": "plan",
+    "steps": [
+      {
+        "solver": "generate",
+        "params": {
+          "tool_calls": "loop"
+        },
+        "params_passed": {}
+      }
+    ],
+    "config": {}
+  },
+  "results": {
+    "total_samples": 3,
+    "completed_samples": 3,
+    "scores": [
+      {
+        "name": "includes",
+        "scorer": "includes",
+        "scored_samples": 3,
+        "unscored_samples": 0,
+        "params": {},
+        "metrics": {
+          "accuracy": {
+            "name": "accuracy",
+            "value": 0.6666666666666666,
+            "params": {}
+          },
+          "stderr": {
+            "name": "stderr",
+            "value": 0.33333333333333337,
+            "params": {}
+          }
+        }
+      },
+      {
+        "name": "match",
+        "scorer": "match",
+        "scored_samples": 3,
+        "unscored_samples": 0,
+        "params": {
+          "location": "any"
+        },
+        "metrics": {
+          "accuracy": {
+            "name": "accuracy",
+            "value": 0.6666666666666666,
+            "params": {}
+          },
+          "stderr": {
+            "name": "stderr",
+            "value": 0.33333333333333337,
+            "params": {}
+          }
+        }
+      }
+    ],
+    "headline": {
+      "scorer": "includes",
+      "score": "includes",
+      "metric": "accuracy"
+    }
+  },
+  "stats": {
+    "started_at": "2026-09-26T17:17:28+00:00",
+    "completed_at": "2026-09-26T17:17:28+00:00",
+    "model_usage": {
+      "mockllm/model": {
+        "input_tokens": 12,
+        "output_tokens": 99,
+        "total_tokens": 111
+      }
+    },
+    "role_usage": {},
+    "connection_limit_history": []
+  },
+  "invalidated": false,
+  "tags": [],
+  "metadata": {},
+  "samples": [
+    {
+      "id": "fr",
+      "epoch": 1,
+      "input": "Capital of France?",
+      "target": "Default output",
+      "messages": [
+        {
+          "id": "cQfMMRynsz8tDhTZpN59An",
+          "content": "Capital of France?",
+          "source": "input",
+          "role": "user"
+        },
+        {
+          "id": "dZLJCNgSodZmqciSrizFPL",
+          "content": "Default output from mockllm/model",
+          "source": "generate",
+          "role": "assistant",
+          "model": "mockllm"
+        }
+      ],
+      "output": {
+        "model": "mockllm",
+        "choices": [
+          {
+            "message": {
+              "id": "dZLJCNgSodZmqciSrizFPL",
+              "content": "Default output from mockllm/model",
+              "source": "generate",
+              "role": "assistant",
+              "model": "mockllm"
+            },
+            "stop_reason": "stop"
+          }
+        ],
+        "completion": "Default output from mockllm/model",
+        "usage": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        },
+        "time": 0.18812192299992603
+      },
+      "scores": {
+        "includes": {
+          "value": "C",
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        },
+        "match": {
+          "value": "C",
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        }
+      },
+      "metadata": {
+        "topic": "geo"
+      },
+      "store": {},
+      "events": [
+        {
+          "uuid": "ExmZXivH6SMNTts4BQ594c",
+          "span_id": "USLZjegqRpxhPP9HHtoUtD",
+          "timestamp": "2026-09-26T17:17:28.316329+00:00",
+          "working_start": 4689.039977329,
+          "event": "span_begin",
+          "id": "USLZjegqRpxhPP9HHtoUtD",
+          "type": "init",
+          "name": "init"
+        },
+        {
+          "uuid": "YtWVcU29phy9xcKrnnSMC6",
+          "span_id": "USLZjegqRpxhPP9HHtoUtD",
+          "timestamp": "2026-09-26T17:17:28.317110+00:00",
+          "working_start": 4689.040759261,
+          "event": "sample_init",
+          "sample": {
+            "input": "Capital of France?",
+            "target": "Default output",
+            "id": "fr",
+            "metadata": {
+              "topic": "geo"
+            }
+          },
+          "state": {
+            "messages": [
+              {
+                "id": "cQfMMRynsz8tDhTZpN59An",
+                "content": "Capital of France?",
+                "source": "input",
+                "role": "user"
+              }
+            ],
+            "tools": [],
+            "tool_choice": null,
+            "store": {},
+            "output": {
+              "model": "mockllm/model",
+              "choices": [],
+              "completion": ""
+            },
+            "completed": false,
+            "metadata": {
+              "topic": "geo"
+            }
+          }
+        },
+        {
+          "uuid": "TPadbvb94VQYRbrFSCwxD7",
+          "span_id": "USLZjegqRpxhPP9HHtoUtD",
+          "timestamp": "2026-09-26T17:17:28.317313+00:00",
+          "working_start": 4689.04096062,
+          "event": "span_end",
+          "id": "USLZjegqRpxhPP9HHtoUtD"
+        },
+        {
+          "uuid": "gtcUxmAGeggnUSwzjB4zKK",
+          "span_id": "HJCohhBjWjFGXWex26tEcT",
+          "timestamp": "2026-09-26T17:17:28.319619+00:00",
+          "working_start": 0.0021547630003624363,
+          "event": "span_begin",
+          "id": "HJCohhBjWjFGXWex26tEcT",
+          "type": "solvers",
+          "name": "solvers"
+        },
+        {
+          "uuid": "bybxvc5dVMEzvPZKeq8m4L",
+          "span_id": "TbS5viGzTorpPKNGtQYBa3",
+          "timestamp": "2026-09-26T17:17:28.319881+00:00",
+          "working_start": 0.0024172740004360094,
+          "event": "span_begin",
+          "id": "TbS5viGzTorpPKNGtQYBa3",
+          "parent_id": "HJCohhBjWjFGXWex26tEcT",
+          "type": "solver",
+          "name": "generate"
+        },
+        {
+          "uuid": "PuwzajNb3URrw6esrzvvyX",
+          "span_id": "TbS5viGzTorpPKNGtQYBa3",
+          "timestamp": "2026-09-26T17:17:28.320081+00:00",
+          "working_start": 0.0026165179997406085,
+          "event": "model",
+          "model": "mockllm/model",
+          "input": [],
+          "input_refs": [
+            [
+              0,
+              1
+            ]
+          ],
+          "tools": [],
+          "tool_choice": "none",
+          "config": {},
+          "output": {
+            "model": "mockllm",
+            "choices": [
+              {
+                "message": {
+                  "id": "dZLJCNgSodZmqciSrizFPL",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            ],
+            "completion": "Default output from mockllm/model",
+            "usage": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            },
+            "time": 0.18812192299992603
+          },
+          "call": {
+            "request": {
+              "model": "model"
+            },
+            "response": {
+              "content": "Default output from mockllm/model"
+            },
+            "call_refs": [
+              [
+                0,
+                1
+              ]
+            ],
+            "call_key": "messages"
+          },
+          "completed": "2026-09-26T17:17:28.658235+00:00",
+          "working_time": 0.18812192299992603
+        },
+        {
+          "uuid": "QuqDLQSjKrQeiDFJUFqCx8",
+          "span_id": "TbS5viGzTorpPKNGtQYBa3",
+          "timestamp": "2026-09-26T17:17:28.658891+00:00",
+          "working_start": 0.1915903580002123,
+          "event": "state",
+          "changes": [
+            {
+              "op": "add",
+              "path": "/messages/1",
+              "value": {
+                "id": "dZLJCNgSodZmqciSrizFPL",
+                "content": "Default output from mockllm/model",
+                "source": "generate",
+                "role": "assistant",
+                "model": "mockllm"
+              }
+            },
+            {
+              "op": "add",
+              "path": "/output/time",
+              "value": 0.18812192299992603
+            },
+            {
+              "op": "add",
+              "path": "/output/usage",
+              "value": {
+                "input_tokens": 4,
+                "output_tokens": 33,
+                "total_tokens": 37
+              }
+            },
+            {
+              "op": "replace",
+              "path": "/output/completion",
+              "value": "Default output from mockllm/model",
+              "replaced": ""
+            },
+            {
+              "op": "replace",
+              "path": "/output/model",
+              "value": "mockllm",
+              "replaced": "mockllm/model"
+            },
+            {
+              "op": "add",
+              "path": "/output/choices/0",
+              "value": {
+                "message": {
+                  "id": "dZLJCNgSodZmqciSrizFPL",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            }
+          ]
+        },
+        {
+          "uuid": "CRHk8MX26MHkQVrmEJsYxY",
+          "span_id": "TbS5viGzTorpPKNGtQYBa3",
+          "timestamp": "2026-09-26T17:17:28.659123+00:00",
+          "working_start": 0.19182135699975333,
+          "event": "span_end",
+          "id": "TbS5viGzTorpPKNGtQYBa3"
+        },
+        {
+          "uuid": "7ga3HDzmBmf5DQBqJazNUX",
+          "span_id": "HJCohhBjWjFGXWex26tEcT",
+          "timestamp": "2026-09-26T17:17:28.659233+00:00",
+          "working_start": 0.1919308619999356,
+          "event": "span_end",
+          "id": "HJCohhBjWjFGXWex26tEcT"
+        },
+        {
+          "uuid": "A2p6xbEWBKobdGyDYskFCk",
+          "span_id": "aa2DFy2n3BMZxq6ysvPQ2B",
+          "timestamp": "2026-09-26T17:17:28.663307+00:00",
+          "working_start": 0.19600531400010368,
+          "event": "span_begin",
+          "id": "aa2DFy2n3BMZxq6ysvPQ2B",
+          "type": "scorers",
+          "name": "scorers"
+        },
+        {
+          "uuid": "3CkNwFpHhSQNQhwzgvQHPb",
+          "span_id": "aiAAV827CUS6HELRE26uRK",
+          "timestamp": "2026-09-26T17:17:28.663419+00:00",
+          "working_start": 0.19611699799952476,
+          "event": "span_begin",
+          "id": "aiAAV827CUS6HELRE26uRK",
+          "parent_id": "aa2DFy2n3BMZxq6ysvPQ2B",
+          "type": "scorer",
+          "name": "includes"
+        },
+        {
+          "uuid": "C8LcaWkxhz3LDhxwDZXrje",
+          "span_id": "aiAAV827CUS6HELRE26uRK",
+          "timestamp": "2026-09-26T17:17:28.663508+00:00",
+          "working_start": 0.1962056729998949,
+          "event": "score",
+          "score": {
+            "value": "C",
+            "answer": "default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "Default output",
+          "intermediate": false,
+          "scorer": "includes",
+          "scorer_args": {},
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "4ozL5o7zzzpYsero3KbUxS",
+          "span_id": "aiAAV827CUS6HELRE26uRK",
+          "timestamp": "2026-09-26T17:17:28.663677+00:00",
+          "working_start": 0.19637523799974588,
+          "event": "span_end",
+          "id": "aiAAV827CUS6HELRE26uRK"
+        },
+        {
+          "uuid": "fU63LA9TL3FeWFvv8SPQYE",
+          "span_id": "jc8QtjuWeh74KPq5JQ5U5C",
+          "timestamp": "2026-09-26T17:17:28.663763+00:00",
+          "working_start": 0.1964612510000734,
+          "event": "span_begin",
+          "id": "jc8QtjuWeh74KPq5JQ5U5C",
+          "parent_id": "aa2DFy2n3BMZxq6ysvPQ2B",
+          "type": "scorer",
+          "name": "match"
+        },
+        {
+          "uuid": "NLTgHut9W8tbCp8mDt2Cwm",
+          "span_id": "jc8QtjuWeh74KPq5JQ5U5C",
+          "timestamp": "2026-09-26T17:17:28.663847+00:00",
+          "working_start": 0.1965451830001257,
+          "event": "score",
+          "score": {
+            "value": "C",
+            "answer": "Default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "Default output",
+          "intermediate": false,
+          "scorer": "match",
+          "scorer_args": {
+            "location": "any"
+          },
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "5BhFSBrU8q58LtqrXRJqMc",
+          "span_id": "jc8QtjuWeh74KPq5JQ5U5C",
+          "timestamp": "2026-09-26T17:17:28.663930+00:00",
+          "working_start": 0.1966278149993741,
+          "event": "span_end",
+          "id": "jc8QtjuWeh74KPq5JQ5U5C"
+        },
+        {
+          "uuid": "nXCvF6tRBYCjGLYJGHXBnM",
+          "span_id": "aa2DFy2n3BMZxq6ysvPQ2B",
+          "timestamp": "2026-09-26T17:17:28.663998+00:00",
+          "working_start": 0.19669582599999558,
+          "event": "span_end",
+          "id": "aa2DFy2n3BMZxq6ysvPQ2B"
+        }
+      ],
+      "model_usage": {
+        "mockllm/model": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        }
+      },
+      "role_usage": {},
+      "started_at": "2026-09-26T17:17:28.317467+00:00",
+      "completed_at": "2026-09-26T17:17:28.665485+00:00",
+      "total_time": 0.348,
+      "working_time": 0.198,
+      "uuid": "aMV2prEG9RECxEXgBwknok",
+      "error_retries": [],
+      "attachments": {},
+      "events_data": {
+        "messages": [
+          {
+            "id": "cQfMMRynsz8tDhTZpN59An",
+            "content": "Capital of France?",
+            "source": "input",
+            "role": "user"
+          }
+        ],
+        "calls": [
+          {
+            "id": "cQfMMRynsz8tDhTZpN59An",
+            "content": "Capital of France?",
+            "source": "input",
+            "metadata": null,
+            "role": "user",
+            "tool_call_id": null
+          }
+        ]
+      },
+      "turn_count": 1
+    },
+    {
+      "id": "jp",
+      "epoch": 1,
+      "input": "Capital of Japan?",
+      "target": "Tokyo",
+      "messages": [
+        {
+          "id": "2kGBDcnGCpNhJNkQ6RpauU",
+          "content": "Capital of Japan?",
+          "source": "input",
+          "role": "user"
+        },
+        {
+          "id": "LdRvX3jU9SiTJowurxHXiz",
+          "content": "Default output from mockllm/model",
+          "source": "generate",
+          "role": "assistant",
+          "model": "mockllm"
+        }
+      ],
+      "output": {
+        "model": "mockllm",
+        "choices": [
+          {
+            "message": {
+              "id": "LdRvX3jU9SiTJowurxHXiz",
+              "content": "Default output from mockllm/model",
+              "source": "generate",
+              "role": "assistant",
+              "model": "mockllm"
+            },
+            "stop_reason": "stop"
+          }
+        ],
+        "completion": "Default output from mockllm/model",
+        "usage": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        },
+        "time": 0.00014798200027144048
+      },
+      "scores": {
+        "includes": {
+          "value": "I",
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        },
+        "match": {
+          "value": "I",
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        }
+      },
+      "metadata": {
+        "topic": "geo"
+      },
+      "store": {},
+      "events": [
+        {
+          "uuid": "VQwhm54Nqmda5j7qcHreeW",
+          "span_id": "Ytiu8UpGqwy4H4TwzudhKq",
+          "timestamp": "2026-09-26T17:17:28.317918+00:00",
+          "working_start": 4689.041565403,
+          "event": "span_begin",
+          "id": "Ytiu8UpGqwy4H4TwzudhKq",
+          "type": "init",
+          "name": "init"
+        },
+        {
+          "uuid": "diEvXNg8oc6xpNbxxaxQb3",
+          "span_id": "Ytiu8UpGqwy4H4TwzudhKq",
+          "timestamp": "2026-09-26T17:17:28.318287+00:00",
+          "working_start": 4689.041934886,
+          "event": "sample_init",
+          "sample": {
+            "input": "Capital of Japan?",
+            "target": "Tokyo",
+            "id": "jp",
+            "metadata": {
+              "topic": "geo"
+            }
+          },
+          "state": {
+            "messages": [
+              {
+                "id": "2kGBDcnGCpNhJNkQ6RpauU",
+                "content": "Capital of Japan?",
+                "source": "input",
+                "role": "user"
+              }
+            ],
+            "tools": [],
+            "tool_choice": null,
+            "store": {},
+            "output": {
+              "model": "mockllm/model",
+              "choices": [],
+              "completion": ""
+            },
+            "completed": false,
+            "metadata": {
+              "topic": "geo"
+            }
+          }
+        },
+        {
+          "uuid": "TrX4rYVkfw6KpHnLdcz4WS",
+          "span_id": "Ytiu8UpGqwy4H4TwzudhKq",
+          "timestamp": "2026-09-26T17:17:28.318426+00:00",
+          "working_start": 4689.042073388,
+          "event": "span_end",
+          "id": "Ytiu8UpGqwy4H4TwzudhKq"
+        },
+        {
+          "uuid": "VRyTc87ex6WNoPYLjajX9Y",
+          "span_id": "Nn82gGCdYqsVazXrbp4NFG",
+          "timestamp": "2026-09-26T17:17:28.320189+00:00",
+          "working_start": 0.0016623049996269401,
+          "event": "span_begin",
+          "id": "Nn82gGCdYqsVazXrbp4NFG",
+          "type": "solvers",
+          "name": "solvers"
+        },
+        {
+          "uuid": "MvPRuzSURXCTQkQepWGziw",
+          "span_id": "jewwCUsHBAGKo6eAdFRrJS",
+          "timestamp": "2026-09-26T17:17:28.320296+00:00",
+          "working_start": 0.0017691689999992377,
+          "event": "span_begin",
+          "id": "jewwCUsHBAGKo6eAdFRrJS",
+          "parent_id": "Nn82gGCdYqsVazXrbp4NFG",
+          "type": "solver",
+          "name": "generate"
+        },
+        {
+          "uuid": "VMy48zswUSKqDrxskthTDk",
+          "span_id": "jewwCUsHBAGKo6eAdFRrJS",
+          "timestamp": "2026-09-26T17:17:28.320454+00:00",
+          "working_start": 0.0019279640000604559,
+          "event": "model",
+          "model": "mockllm/model",
+          "input": [],
+          "input_refs": [
+            [
+              0,
+              1
+            ]
+          ],
+          "tools": [],
+          "tool_choice": "none",
+          "config": {},
+          "output": {
+            "model": "mockllm",
+            "choices": [
+              {
+                "message": {
+                  "id": "LdRvX3jU9SiTJowurxHXiz",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            ],
+            "completion": "Default output from mockllm/model",
+            "usage": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            },
+            "time": 0.00014798200027144048
+          },
+          "call": {
+            "request": {
+              "model": "model"
+            },
+            "response": {
+              "content": "Default output from mockllm/model"
+            },
+            "call_refs": [
+              [
+                0,
+                1
+              ]
+            ],
+            "call_key": "messages"
+          },
+          "completed": "2026-09-26T17:17:28.660755+00:00",
+          "working_time": 0.00014798200027144048
+        },
+        {
+          "uuid": "E6Nc7LMdJtyWRttMqm7Vro",
+          "span_id": "jewwCUsHBAGKo6eAdFRrJS",
+          "timestamp": "2026-09-26T17:17:28.661060+00:00",
+          "working_start": 0.0025071590007428313,
+          "event": "state",
+          "changes": [
+            {
+              "op": "add",
+              "path": "/messages/1",
+              "value": {
+                "id": "LdRvX3jU9SiTJowurxHXiz",
+                "content": "Default output from mockllm/model",
+                "source": "generate",
+                "role": "assistant",
+                "model": "mockllm"
+              }
+            },
+            {
+              "op": "add",
+              "path": "/output/time",
+              "value": 0.00014798200027144048
+            },
+            {
+              "op": "add",
+              "path": "/output/usage",
+              "value": {
+                "input_tokens": 4,
+                "output_tokens": 33,
+                "total_tokens": 37
+              }
+            },
+            {
+              "op": "replace",
+              "path": "/output/completion",
+              "value": "Default output from mockllm/model",
+              "replaced": ""
+            },
+            {
+              "op": "replace",
+              "path": "/output/model",
+              "value": "mockllm",
+              "replaced": "mockllm/model"
+            },
+            {
+              "op": "add",
+              "path": "/output/choices/0",
+              "value": {
+                "message": {
+                  "id": "LdRvX3jU9SiTJowurxHXiz",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            }
+          ]
+        },
+        {
+          "uuid": "BW8stATmm7CEpU8bfoc9kf",
+          "span_id": "jewwCUsHBAGKo6eAdFRrJS",
+          "timestamp": "2026-09-26T17:17:28.661207+00:00",
+          "working_start": 0.002653710000231513,
+          "event": "span_end",
+          "id": "jewwCUsHBAGKo6eAdFRrJS"
+        },
+        {
+          "uuid": "P59Z7tejgkESmc6HXmcQ3j",
+          "span_id": "Nn82gGCdYqsVazXrbp4NFG",
+          "timestamp": "2026-09-26T17:17:28.661303+00:00",
+          "working_start": 0.002749282000877429,
+          "event": "span_end",
+          "id": "Nn82gGCdYqsVazXrbp4NFG"
+        },
+        {
+          "uuid": "oAhY5DcZLHyFzRBrPEyi3p",
+          "span_id": "Tjwqwm3tZHY7CPWERVDGXE",
+          "timestamp": "2026-09-26T17:17:28.664178+00:00",
+          "working_start": 0.005624763000923849,
+          "event": "span_begin",
+          "id": "Tjwqwm3tZHY7CPWERVDGXE",
+          "type": "scorers",
+          "name": "scorers"
+        },
+        {
+          "uuid": "JehidzAtJpBP2CzTHfyyQU",
+          "span_id": "HfHdvmBKDVevmxYxWBdv6v",
+          "timestamp": "2026-09-26T17:17:28.664264+00:00",
+          "working_start": 0.005711063000489958,
+          "event": "span_begin",
+          "id": "HfHdvmBKDVevmxYxWBdv6v",
+          "parent_id": "Tjwqwm3tZHY7CPWERVDGXE",
+          "type": "scorer",
+          "name": "includes"
+        },
+        {
+          "uuid": "HwwMU8XQkTiEq5QnGDGTB2",
+          "span_id": "HfHdvmBKDVevmxYxWBdv6v",
+          "timestamp": "2026-09-26T17:17:28.664336+00:00",
+          "working_start": 0.005782147000900295,
+          "event": "score",
+          "score": {
+            "value": "I",
+            "answer": "default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "Tokyo",
+          "intermediate": false,
+          "scorer": "includes",
+          "scorer_args": {},
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "m2Cp2S4EvBxtWX6CyBkWBP",
+          "span_id": "HfHdvmBKDVevmxYxWBdv6v",
+          "timestamp": "2026-09-26T17:17:28.664429+00:00",
+          "working_start": 0.005875987000763416,
+          "event": "span_end",
+          "id": "HfHdvmBKDVevmxYxWBdv6v"
+        },
+        {
+          "uuid": "kUEGEy9K5b4HjRekJj5pP6",
+          "span_id": "V7m4LvMNvfPk5NcdTajPRr",
+          "timestamp": "2026-09-26T17:17:28.664498+00:00",
+          "working_start": 0.005944458001067687,
+          "event": "span_begin",
+          "id": "V7m4LvMNvfPk5NcdTajPRr",
+          "parent_id": "Tjwqwm3tZHY7CPWERVDGXE",
+          "type": "scorer",
+          "name": "match"
+        },
+        {
+          "uuid": "ijbBVJm2nPe3SWBJ2dofLG",
+          "span_id": "V7m4LvMNvfPk5NcdTajPRr",
+          "timestamp": "2026-09-26T17:17:28.664565+00:00",
+          "working_start": 0.0060115530004623,
+          "event": "score",
+          "score": {
+            "value": "I",
+            "answer": "Default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "Tokyo",
+          "intermediate": false,
+          "scorer": "match",
+          "scorer_args": {
+            "location": "any"
+          },
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "iqbCxnYv9KQgr7N9T6ktVa",
+          "span_id": "V7m4LvMNvfPk5NcdTajPRr",
+          "timestamp": "2026-09-26T17:17:28.664633+00:00",
+          "working_start": 0.006079681000301207,
+          "event": "span_end",
+          "id": "V7m4LvMNvfPk5NcdTajPRr"
+        },
+        {
+          "uuid": "6V35wBhVNhMub2w6QtGsne",
+          "span_id": "Tjwqwm3tZHY7CPWERVDGXE",
+          "timestamp": "2026-09-26T17:17:28.664693+00:00",
+          "working_start": 0.006139278000773629,
+          "event": "span_end",
+          "id": "Tjwqwm3tZHY7CPWERVDGXE"
+        }
+      ],
+      "model_usage": {
+        "mockllm/model": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        }
+      },
+      "role_usage": {},
+      "started_at": "2026-09-26T17:17:28.318528+00:00",
+      "completed_at": "2026-09-26T17:17:28.666705+00:00",
+      "total_time": 0.348,
+      "working_time": 0.008,
+      "uuid": "Jw2gYtK5cav7sDcHR4pGoC",
+      "error_retries": [],
+      "attachments": {},
+      "events_data": {
+        "messages": [
+          {
+            "id": "2kGBDcnGCpNhJNkQ6RpauU",
+            "content": "Capital of Japan?",
+            "source": "input",
+            "role": "user"
+          }
+        ],
+        "calls": [
+          {
+            "id": "2kGBDcnGCpNhJNkQ6RpauU",
+            "content": "Capital of Japan?",
+            "source": "input",
+            "metadata": null,
+            "role": "user",
+            "tool_call_id": null
+          }
+        ]
+      },
+      "turn_count": 1
+    },
+    {
+      "id": "math-1",
+      "epoch": 1,
+      "input": "2+2?",
+      "target": "output from mockllm",
+      "messages": [
+        {
+          "id": "Wn6aUfUs2nEhEvThdWAv5j",
+          "content": "2+2?",
+          "source": "input",
+          "role": "user"
+        },
+        {
+          "id": "YEivmBeDoF7KoHtzwAvkmF",
+          "content": "Default output from mockllm/model",
+          "source": "generate",
+          "role": "assistant",
+          "model": "mockllm"
+        }
+      ],
+      "output": {
+        "model": "mockllm",
+        "choices": [
+          {
+            "message": {
+              "id": "YEivmBeDoF7KoHtzwAvkmF",
+              "content": "Default output from mockllm/model",
+              "source": "generate",
+              "role": "assistant",
+              "model": "mockllm"
+            },
+            "stop_reason": "stop"
+          }
+        ],
+        "completion": "Default output from mockllm/model",
+        "usage": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        },
+        "time": 0.00009627800045564072
+      },
+      "scores": {
+        "includes": {
+          "value": "C",
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        },
+        "match": {
+          "value": "C",
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": []
+        }
+      },
+      "metadata": {
+        "topic": "math"
+      },
+      "store": {},
+      "events": [
+        {
+          "uuid": "NcnjM7XTiYj5SwQdUQwHef",
+          "span_id": "AFS5zBjix45rzSUD2S3udx",
+          "timestamp": "2026-09-26T17:17:28.318919+00:00",
+          "working_start": 4689.042566012,
+          "event": "span_begin",
+          "id": "AFS5zBjix45rzSUD2S3udx",
+          "type": "init",
+          "name": "init"
+        },
+        {
+          "uuid": "RHfVtEi8hzpoqw6Y2JDL6Q",
+          "span_id": "AFS5zBjix45rzSUD2S3udx",
+          "timestamp": "2026-09-26T17:17:28.319206+00:00",
+          "working_start": 4689.042853031,
+          "event": "sample_init",
+          "sample": {
+            "input": "2+2?",
+            "target": "output from mockllm",
+            "id": "math-1",
+            "metadata": {
+              "topic": "math"
+            }
+          },
+          "state": {
+            "messages": [
+              {
+                "id": "Wn6aUfUs2nEhEvThdWAv5j",
+                "content": "2+2?",
+                "source": "input",
+                "role": "user"
+              }
+            ],
+            "tools": [],
+            "tool_choice": null,
+            "store": {},
+            "output": {
+              "model": "mockllm/model",
+              "choices": [],
+              "completion": ""
+            },
+            "completed": false,
+            "metadata": {
+              "topic": "math"
+            }
+          }
+        },
+        {
+          "uuid": "gBB5EiiAh5CfCRzSWehyqA",
+          "span_id": "AFS5zBjix45rzSUD2S3udx",
+          "timestamp": "2026-09-26T17:17:28.319333+00:00",
+          "working_start": 4689.04298041,
+          "event": "span_end",
+          "id": "AFS5zBjix45rzSUD2S3udx"
+        },
+        {
+          "uuid": "oV3hYDYZbJTJkeND2tUhWw",
+          "span_id": "6Nwhe6ufZtTGxPRVffF6rQ",
+          "timestamp": "2026-09-26T17:17:28.320609+00:00",
+          "working_start": 0.0012087120003343443,
+          "event": "span_begin",
+          "id": "6Nwhe6ufZtTGxPRVffF6rQ",
+          "type": "solvers",
+          "name": "solvers"
+        },
+        {
+          "uuid": "hQPNSEVFbA7cVuTVaKugB6",
+          "span_id": "HsPN5ywqJJQyLNemyBarap",
+          "timestamp": "2026-09-26T17:17:28.320732+00:00",
+          "working_start": 0.0013317880002432503,
+          "event": "span_begin",
+          "id": "HsPN5ywqJJQyLNemyBarap",
+          "parent_id": "6Nwhe6ufZtTGxPRVffF6rQ",
+          "type": "solver",
+          "name": "generate"
+        },
+        {
+          "uuid": "XGhTe9iit84yBp8m2kSaAD",
+          "span_id": "HsPN5ywqJJQyLNemyBarap",
+          "timestamp": "2026-09-26T17:17:28.320874+00:00",
+          "working_start": 0.0014742280000064056,
+          "event": "model",
+          "model": "mockllm/model",
+          "input": [],
+          "input_refs": [
+            [
+              0,
+              1
+            ]
+          ],
+          "tools": [],
+          "tool_choice": "none",
+          "config": {},
+          "output": {
+            "model": "mockllm",
+            "choices": [
+              {
+                "message": {
+                  "id": "YEivmBeDoF7KoHtzwAvkmF",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            ],
+            "completion": "Default output from mockllm/model",
+            "usage": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            },
+            "time": 0.00009627800045564072
+          },
+          "call": {
+            "request": {
+              "model": "model"
+            },
+            "response": {
+              "content": "Default output from mockllm/model"
+            },
+            "call_refs": [
+              [
+                0,
+                1
+              ]
+            ],
+            "call_key": "messages"
+          },
+          "completed": "2026-09-26T17:17:28.662518+00:00",
+          "working_time": 0.00009627800045564072
+        },
+        {
+          "uuid": "N876DvGaiYuoghNU8Je29Y",
+          "span_id": "HsPN5ywqJJQyLNemyBarap",
+          "timestamp": "2026-09-26T17:17:28.662787+00:00",
+          "working_start": 0.0019302670016259071,
+          "event": "state",
+          "changes": [
+            {
+              "op": "add",
+              "path": "/messages/1",
+              "value": {
+                "id": "YEivmBeDoF7KoHtzwAvkmF",
+                "content": "Default output from mockllm/model",
+                "source": "generate",
+                "role": "assistant",
+                "model": "mockllm"
+              }
+            },
+            {
+              "op": "add",
+              "path": "/output/time",
+              "value": 0.00009627800045564072
+            },
+            {
+              "op": "add",
+              "path": "/output/usage",
+              "value": {
+                "input_tokens": 4,
+                "output_tokens": 33,
+                "total_tokens": 37
+              }
+            },
+            {
+              "op": "replace",
+              "path": "/output/completion",
+              "value": "Default output from mockllm/model",
+              "replaced": ""
+            },
+            {
+              "op": "replace",
+              "path": "/output/model",
+              "value": "mockllm",
+              "replaced": "mockllm/model"
+            },
+            {
+              "op": "add",
+              "path": "/output/choices/0",
+              "value": {
+                "message": {
+                  "id": "YEivmBeDoF7KoHtzwAvkmF",
+                  "content": "Default output from mockllm/model",
+                  "source": "generate",
+                  "role": "assistant",
+                  "model": "mockllm"
+                },
+                "stop_reason": "stop"
+              }
+            }
+          ]
+        },
+        {
+          "uuid": "2Zx3VV6bzmPEoTBNXBwyRA",
+          "span_id": "HsPN5ywqJJQyLNemyBarap",
+          "timestamp": "2026-09-26T17:17:28.662917+00:00",
+          "working_start": 0.0020596070016836165,
+          "event": "span_end",
+          "id": "HsPN5ywqJJQyLNemyBarap"
+        },
+        {
+          "uuid": "UEsr4KZJZmH87Uqgw5EiAL",
+          "span_id": "6Nwhe6ufZtTGxPRVffF6rQ",
+          "timestamp": "2026-09-26T17:17:28.663003+00:00",
+          "working_start": 0.0021458210012497148,
+          "event": "span_end",
+          "id": "6Nwhe6ufZtTGxPRVffF6rQ"
+        },
+        {
+          "uuid": "9pKjV2SJYPtvkCbKTo9ebL",
+          "span_id": "co6zq2dEaCSkquyJU2nHmU",
+          "timestamp": "2026-09-26T17:17:28.664840+00:00",
+          "working_start": 0.003982398001426191,
+          "event": "span_begin",
+          "id": "co6zq2dEaCSkquyJU2nHmU",
+          "type": "scorers",
+          "name": "scorers"
+        },
+        {
+          "uuid": "QPZakqtYbhGywcubY7tGBG",
+          "span_id": "MUpUqwPfE5zDTvZ2kekTtv",
+          "timestamp": "2026-09-26T17:17:28.664919+00:00",
+          "working_start": 0.0040612560014778865,
+          "event": "span_begin",
+          "id": "MUpUqwPfE5zDTvZ2kekTtv",
+          "parent_id": "co6zq2dEaCSkquyJU2nHmU",
+          "type": "scorer",
+          "name": "includes"
+        },
+        {
+          "uuid": "fZbFAfRJ8uFguj7ExoB5QW",
+          "span_id": "MUpUqwPfE5zDTvZ2kekTtv",
+          "timestamp": "2026-09-26T17:17:28.664986+00:00",
+          "working_start": 0.004128492001655104,
+          "event": "score",
+          "score": {
+            "value": "C",
+            "answer": "default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "output from mockllm",
+          "intermediate": false,
+          "scorer": "includes",
+          "scorer_args": {},
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "NH9xBnHCQPWvCXjW9XCunm",
+          "span_id": "MUpUqwPfE5zDTvZ2kekTtv",
+          "timestamp": "2026-09-26T17:17:28.665058+00:00",
+          "working_start": 0.004200570001557935,
+          "event": "span_end",
+          "id": "MUpUqwPfE5zDTvZ2kekTtv"
+        },
+        {
+          "uuid": "7g3G25Cp6EttrU69Tzpa92",
+          "span_id": "SyrsNsRKc3igrudwPGXYoB",
+          "timestamp": "2026-09-26T17:17:28.665123+00:00",
+          "working_start": 0.0042656760015233885,
+          "event": "span_begin",
+          "id": "SyrsNsRKc3igrudwPGXYoB",
+          "parent_id": "co6zq2dEaCSkquyJU2nHmU",
+          "type": "scorer",
+          "name": "match"
+        },
+        {
+          "uuid": "S8APiTRjpthqT8czYArzj3",
+          "span_id": "SyrsNsRKc3igrudwPGXYoB",
+          "timestamp": "2026-09-26T17:17:28.665190+00:00",
+          "working_start": 0.004332071001044824,
+          "event": "score",
+          "score": {
+            "value": "C",
+            "answer": "Default output from mockllm/model",
+            "explanation": "Default output from mockllm/model",
+            "history": []
+          },
+          "target": "output from mockllm",
+          "intermediate": false,
+          "scorer": "match",
+          "scorer_args": {
+            "location": "any"
+          },
+          "model_usage": {
+            "mockllm/model": {
+              "input_tokens": 4,
+              "output_tokens": 33,
+              "total_tokens": 37
+            }
+          }
+        },
+        {
+          "uuid": "2bDGNM88RVMTcCD8ANimma",
+          "span_id": "SyrsNsRKc3igrudwPGXYoB",
+          "timestamp": "2026-09-26T17:17:28.665259+00:00",
+          "working_start": 0.004401619001328072,
+          "event": "span_end",
+          "id": "SyrsNsRKc3igrudwPGXYoB"
+        },
+        {
+          "uuid": "h32aJjtyoAvKdLh9cVMbK2",
+          "span_id": "co6zq2dEaCSkquyJU2nHmU",
+          "timestamp": "2026-09-26T17:17:28.665322+00:00",
+          "working_start": 0.004463980001673917,
+          "event": "span_end",
+          "id": "co6zq2dEaCSkquyJU2nHmU"
+        }
+      ],
+      "model_usage": {
+        "mockllm/model": {
+          "input_tokens": 4,
+          "output_tokens": 33,
+          "total_tokens": 37
+        }
+      },
+      "role_usage": {},
+      "started_at": "2026-09-26T17:17:28.319401+00:00",
+      "completed_at": "2026-09-26T17:17:28.667414+00:00",
+      "total_time": 0.348,
+      "working_time": 0.007,
+      "uuid": "Q9umhypAHBd8a2UsftGSCg",
+      "error_retries": [],
+      "attachments": {},
+      "events_data": {
+        "messages": [
+          {
+            "id": "Wn6aUfUs2nEhEvThdWAv5j",
+            "content": "2+2?",
+            "source": "input",
+            "role": "user"
+          }
+        ],
+        "calls": [
+          {
+            "id": "Wn6aUfUs2nEhEvThdWAv5j",
+            "content": "2+2?",
+            "source": "input",
+            "metadata": null,
+            "role": "user",
+            "tool_call_id": null
+          }
+        ]
+      },
+      "turn_count": 1
+    }
+  ],
+  "reductions": [
+    {
+      "scorer": "includes",
+      "samples": [
+        {
+          "value": 1.0,
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "fr"
+        },
+        {
+          "value": 0.0,
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "jp"
+        },
+        {
+          "value": 1.0,
+          "answer": "default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "math-1"
+        }
+      ]
+    },
+    {
+      "scorer": "match",
+      "samples": [
+        {
+          "value": 1.0,
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "fr"
+        },
+        {
+          "value": 0.0,
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "jp"
+        },
+        {
+          "value": 1.0,
+          "answer": "Default output from mockllm/model",
+          "explanation": "Default output from mockllm/model",
+          "history": [],
+          "sample_id": "math-1"
+        }
+      ]
+    }
+  ]
+}

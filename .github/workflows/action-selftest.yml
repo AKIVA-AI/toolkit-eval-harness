@@ -1,0 +1,81 @@
+name: Action self-test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pull-requests: write  # the PR-comment step below
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Build reports from the promptfoo fixtures
+        run: |
+          pip install -q .
+          toolkit-eval import promptfoo tests/fixtures/importers/promptfoo/baseline.json --out base.json || true
+          toolkit-eval import promptfoo tests/fixtures/importers/promptfoo/candidate.json --out cand.json || true
+          toolkit-eval import deepeval tests/fixtures/importers/deepeval/test_run.json --out other.json || true
+
+      - name: Same report passes
+        id: same
+        uses: ./
+        with:
+          baseline: base.json
+          candidate: base.json
+          out: same.json
+
+      - name: Candidate with a new failure fails the flip gate
+        id: flips
+        uses: ./
+        continue-on-error: true
+        with:
+          baseline: base.json
+          candidate: cand.json
+          max-score-regression-pct: "100"
+          max-new-failures: "0"
+          out: flips.json
+
+      - name: Different suites are an error
+        id: mismatch
+        uses: ./
+        with:
+          baseline: base.json
+          candidate: other.json
+          out: mismatch.json
+          fail-on-regression: "false"
+
+      - name: PR comment path
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./
+        with:
+          baseline: base.json
+          candidate: cand.json
+          max-score-regression-pct: "100"
+          out: comment.json
+          comment-on-pr: "true"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check outputs
+        env:
+          SAME: ${{ steps.same.outputs.verdict }}
+          FLIPS: ${{ steps.flips.outputs.verdict }}
+          FLIPS_OUTCOME: ${{ steps.flips.outcome }}
+          FLIPS_CODE: ${{ steps.flips.outputs.exit-code }}
+          MISMATCH: ${{ steps.mismatch.outputs.verdict }}
+          MISMATCH_CODE: ${{ steps.mismatch.outputs.exit-code }}
+        run: |
+          set -x
+          test "$SAME" = pass
+          test "$FLIPS" = fail && test "$FLIPS_CODE" = 1 && test "$FLIPS_OUTCOME" = failure
+          test "$MISMATCH" = error && test "$MISMATCH_CODE" = 4
+          toolkit-eval validate-report --report flips.json
+          python -c 'import json; s=json.load(open("flips.json"))["predicate"]["summary"]; assert s["new_failure_count"] == 1 and s["reason"] == "new_failures", s'

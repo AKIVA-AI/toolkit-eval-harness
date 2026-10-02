@@ -1,0 +1,3 @@
+{"id": "fr", "input": {"question": "What is the capital of France?"}, "expected": "Paris", "tags": ["europe"]}
+{"id": "jp", "input": {"question": "What is the capital of Japan?"}, "expected": "Tokyo", "tags": ["asia"]}
+{"id": "ca", "input": {"question": "What is the capital of Canada?"}, "expected": "Ottawa", "tags": ["americas"]}

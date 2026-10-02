@@ -1,0 +1,34 @@
+description: toolkit-eval-harness importer sample (echo provider, offline)
+prompts:
+  - "Answer: {{answer}}"
+providers:
+  - echo
+tests:
+  - description: capital of France
+    vars: {answer: Paris}
+    assert:
+      - type: contains
+        value: Paris
+    metadata: {topic: geo}
+  - description: capital of Japan
+    vars: {answer: Kyoto}
+    assert:
+      - type: contains
+        value: Tokyo
+    metadata: {topic: geo}
+  - description: two plus two
+    vars: {answer: "4"}
+    assert:
+      - type: equals
+        value: "Answer: 4"
+    metadata: {topic: math}
+  - description: weighted partial
+    vars: {answer: "blue sky"}
+    assert:
+      - type: icontains
+        value: BLUE
+        weight: 1
+      - type: contains
+        value: green
+        weight: 1
+    metadata: {topic: color}

@@ -1,0 +1,3 @@
+# Fixtures produced by other tools are byte-exact samples; do not normalize line endings.
+tests/fixtures/** -text
+*.eval binary
